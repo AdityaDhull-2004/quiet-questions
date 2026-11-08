@@ -20,7 +20,7 @@ Each plate runs in three rounds:
 2. **Why.** Every answer gets its own counter-question with three reasons to pick from (for example "Why food and not money?"). The reason changes the scoring: giving money to ease your own discomfort reads differently from giving it out of respect for his choices.
 3. **The twist.** The situation changes (the shop won't serve him, the pedestrian dies, the hint is missed) and 2 or 3 options test whether the first answer holds.
 
-After each pick the analyst replies with a one- or two-line remark. When the plate is done the page shows **how the other answers read** and **the research behind the plate**, with links to the papers.
+The person answering sees only the questions. They get no remarks, no scores and no reading. When they finish they see a thank-you screen, and their answers are sent to the owner's Google Sheet (see below).
 
 After plate V, **the mirror** asks two questions: how you would act compared with most people, and whether you answered as you would act or as you would like to act (Epley & Dunning 2000; FeldmanHall et al. 2012).
 
@@ -37,7 +37,19 @@ That gives 30 × 18 × 18 × 18 × 18 = 3,149,280 distinct paths through the fiv
 
 All 3,149,280 possible paths were run through the scoring. Every profile and every pattern is reachable, and every score stays within 0–100.
 
-A reading can be reopened from its link (`#r=<answer code>&m=<mirror>&n=<name>`) without retaking the questions. Each plate is coded as choice letter, reason letter and twist number, for example `Bb2`.
+The full reading also lists every answer with the analyst's one- or two-line remark on it, and the research behind each plate.
+
+## Who sees the readings
+
+Only the owner. Each row in the Sheet has a **Reading link** (`#r=<answer code>&m=<mirror>&n=<name>`). Each plate is coded as choice letter, reason letter and twist number, for example `Bb2`. Opening a link asks for the owner passphrase once per browser, and after that readings open directly. **Lock this browser** at the bottom of a reading makes it forget the passphrase.
+
+The page stores only a SHA-256 hash of the passphrase (`OWNER_HASH` in `index.html`), never the passphrase itself. To change it, put the SHA-256 hex of the new passphrase in `OWNER_HASH`:
+
+```sh
+printf '%s' 'new-passphrase' | sha256sum
+```
+
+This keeps readings away from respondents. It is not strong security, because the scoring runs in the browser and a technically minded person could reconstruct a reading from the page source.
 
 ## Sharing it
 
@@ -56,6 +68,8 @@ A static page cannot write to a database by itself, so answers go to a small Goo
 5. In `index.html`, paste that URL into `const RESPONSE_ENDPOINT = "";` near the top of the script. Then commit and push.
 
 From then on, every finished run adds a row to the **Responses** tab with the person's name, the choice, reason and twist for each plate, both mirror answers, the profile name, six trait scores, the matched patterns, and a link that reopens their full reading. Respondents are told on the first screen that their name and answers will be sent to you.
+
+To check that a response arrived, open the Sheet and look at the **Responses** tab at the bottom (the script creates it; *Sheet1* stays empty). You can also open the script at [script.google.com](https://script.google.com) → your project → **Executions**. Each `doPost` run listed as *Completed* is one saved response.
 
 To check that the deployment is live, open the `/exec` URL in a browser. It should return `{"ok":true,...}`.
 

@@ -41,6 +41,7 @@
 }
 
 * { box-sizing: border-box; }
+[hidden] { display: none !important; }
 html { -webkit-text-size-adjust: 100%; }
 body {
   margin: 0;
@@ -137,9 +138,6 @@ main { padding-block: 2.25rem 3.5rem; }
 .msg { display: grid; gap: 0.45rem; max-width: 36rem; min-width: 0; padding: 0.95rem 1.15rem 1rem; background: var(--sunk); border-radius: 4px 16px 16px 16px; scroll-margin-top: 1.5rem; }
 .msg .who { font-family: var(--f-mono); font-size: 0.66rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--red); }
 .msg .ask { font-family: var(--f-display); font-size: var(--s-1); line-height: 1.25; }
-.msg h3 { font-size: 1.4rem; }
-.msg .daily { color: var(--ink-2); font-size: 0.97rem; }
-.msg .daily .label { margin-right: 0.5rem; }
 .msg.you { justify-self: end; max-width: 30rem; background: var(--ink); color: var(--paper); border-radius: 16px 4px 16px 16px; }
 .msg.you .who { color: var(--paper); opacity: 0.7; }
 .typing { display: flex; gap: 0.35rem; width: fit-content; padding: 0.95rem 1.1rem; }
@@ -159,7 +157,6 @@ main { padding-block: 2.25rem 3.5rem; }
 .choice:focus-visible { outline: 2px solid var(--red); outline-offset: 2px; }
 
 .after { display: grid; gap: 0.9rem; margin-top: 1.25rem; padding-top: 1.25rem; border-top: 1px dashed var(--rule); }
-.reads { padding: 1rem 1.2rem; border: 1px solid var(--rule); border-radius: 6px; display: grid; gap: 0.3rem; }
 details.fold { border-top: 1px solid var(--rule); padding-top: 0.8rem; }
 details.fold > summary {
   cursor: pointer; list-style: none; display: flex; justify-content: space-between; gap: 1rem; align-items: baseline;
@@ -170,10 +167,6 @@ details.fold > summary::after { content: "+"; font-size: 1rem; color: var(--red)
 details.fold[open] > summary::after { content: "\2212"; }
 details.fold > summary:focus-visible { outline: 2px solid var(--red); outline-offset: 3px; }
 .fold-body { display: grid; gap: 1.1rem; padding-block: 1rem 0.4rem; }
-.other { display: grid; gap: 0.35rem; }
-.other .q { font-style: italic; color: var(--ink-2); }
-.other h4 { margin: 0; font-family: var(--f-display); font-weight: 400; font-size: 1.15rem; }
-.other .case b { font-weight: 500; color: var(--red); }
 .refs { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.9rem; }
 .refs li { display: grid; gap: 0.2rem; }
 .refs .cite { font-size: 0.9rem; color: var(--ink-2); }
@@ -214,8 +207,11 @@ details.fold > summary:focus-visible { outline: 2px solid var(--red); outline-of
 .recap .body { display: grid; gap: 0.25rem; min-width: 0; }
 .recap .t { font-family: var(--f-display); font-size: 1.1rem; }
 .recap .ans { font-size: 0.96rem; }
-.recap .ans span { color: var(--ink-2); }
-.recap .ans .lab { font-family: var(--f-mono); font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; margin-right: 0.35rem; }
+.recap .pick { display: grid; gap: 0.15rem; padding-top: 0.45rem; }
+.recap .note { font-size: 0.95rem; color: var(--ink-2); }
+.recap .note b { font-weight: 500; color: var(--ink); }
+.recap .lab { font-family: var(--f-mono); font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; margin-right: 0.4rem; color: var(--ink-2); }
+.recap details.fold { margin-top: 0.6rem; }
 .status { font-family: var(--f-mono); font-size: 0.75rem; color: var(--ink-2); }
 .linkbox { width: 100%; padding: 0.6rem 0.7rem; font-family: var(--f-mono); font-size: 0.78rem; color: var(--ink); background: var(--card); border: 1px solid var(--rule); border-radius: 4px; }
 
@@ -1172,13 +1168,28 @@ function hashOf(a, name) {
 function resultLink(a, name) { return location.href.split("#")[0] + hashOf(a, name); }
 
 /* ---------- state ---------- */
-let state = { name: "", answers: {}, saved: false };
+let state = { name: "", answers: {} };
+
+// SHA-256 of the owner's passphrase. A reading opens only in a browser where that passphrase has been entered;
+// people taking the questionnaire never see one.
+const OWNER_HASH = "45b6392af63d8ef490e8c33ba84795c9940e67bfec697c4e4b3ff248921234f5";
+const OWNER_KEY = "qq-owner";
+
+async function sha256(s) {
+  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(s));
+  return Array.from(new Uint8Array(buf), b => b.toString(16).padStart(2, "0")).join("");
+}
+function storedPass() { try { return localStorage.getItem(OWNER_KEY) || ""; } catch (e) { return ""; } }
+async function isOwner(pass) {
+  if (!pass || !window.crypto || !crypto.subtle) return false;
+  return (await sha256(pass)) === OWNER_HASH;
+}
 
 function setProgress(current) {
   if (current < 0) { $progress.hidden = true; return; }
   $progress.hidden = false;
   $progress.textContent = "";
-  const stops = PLATES.map(p => ({ label: p.numeral, title: "Plate " + p.numeral })).concat([{ label: "M", title: "The mirror" }]);
+  const stops = PLATES.map(p => ({ label: p.numeral, title: "Plate " + p.numeral })).concat([{ label: "M", title: "Two last questions" }]);
   stops.forEach((s, i) => {
     const cls = "dot" + (i < current ? " done" : i === current ? " now" : "");
     $progress.append(el("span", { class: cls, title: s.title, "aria-current": i === current ? "step" : null }, s.label));
@@ -1193,12 +1204,12 @@ function renderIntro() {
   s.append(blot(404, 2, "A symmetrical inkblot in black and red"));
   s.append(el("p", { class: "eyebrow" }, "Five plates · a short session · about ten minutes"));
   s.append(el("h1", null, "Five questions you answer every day without noticing."));
-  s.append(el("p", { class: "lede" }, "Five everyday dilemmas, played as a short conversation with an analyst. Choose, say why, then face a twist. You get a reading of how you balance kindness, honesty, loyalty, freedom and truth."));
+  s.append(el("p", { class: "lede" }, "Five everyday dilemmas, played as a short conversation. Say what you would do and why, then face a twist. There are no right answers: answer the way you would actually act."));
   s.append(el("div", { class: "steps" }, [
     el("div", { class: "step" }, [el("b", null, "Choose"), el("span", null, "What would you actually do?")]),
     el("div", { class: "step" }, [el("b", null, "Explain"), el("span", null, "Pick the reason closest to yours.")]),
     el("div", { class: "step" }, [el("b", null, "Face the twist"), el("span", null, "The situation changes. Do you?")]),
-    el("div", { class: "step" }, [el("b", null, "The mirror"), el("span", null, "Two closing questions about how you see yourself.")])
+    el("div", { class: "step" }, [el("b", null, "Two last questions"), el("span", null, "About how you see yourself.")])
   ]));
   const list = el("ol", { class: "plate-list", "aria-label": "The five plates" });
   PLATES.forEach(p => list.append(el("li", null, [
@@ -1217,13 +1228,13 @@ function renderIntro() {
     err,
     el("p", { class: "hint", id: "name-hint" }, RESPONSE_ENDPOINT
       ? "When you finish, your name and answers are sent to the person who shared this page with you."
-      : "Your answers stay in this browser tab.")
+      : "Recording is not set up, so answers will not be saved.")
   ]);
   form.addEventListener("submit", e => {
     e.preventDefault();
     const v = input.value.trim().replace(/\s+/g, " ");
     if (!v) { err.hidden = false; input.focus(); return; }
-    state = { name: v, answers: {}, saved: false };
+    state = { name: v, answers: {} };
     renderPlate(0);
   });
   s.append(form);
@@ -1242,11 +1253,6 @@ async function analystSays(thread, kids, delay, anchor) {
   bringIntoView(msg, anchor || msg);
   return msg;
 }
-function noteKids(r) {
-  const kids = [el("h3", null, r.title), el("p", null, r.body)];
-  if (r.daily) kids.push(el("p", { class: "daily" }, [el("span", { class: "label" }, "In daily life"), r.daily]));
-  return kids;
-}
 function choose(thread, options, anchor) {
   return new Promise(resolve => {
     const box = el("div", { class: "choices reveal", role: "group", "aria-label": "Your answer" });
@@ -1264,12 +1270,15 @@ function choose(thread, options, anchor) {
     bringIntoView(box, anchor);
   });
 }
-// One round: the analyst asks, the person picks, the analyst responds with the note for that pick.
-async function round(thread, prompt, options, anchor, firstDelay) {
-  const ask = await analystSays(thread, [el("p", { class: "ask" }, prompt)], firstDelay, anchor);
-  const { o, mine } = await choose(thread, options, ask);
-  const note = await analystSays(thread, noteKids(o), 800, mine);
-  return { o, note };
+// One round: the analyst asks and the person picks. The person answering never sees what an answer reads as.
+async function round(thread, prompt, options, anchor, delay) {
+  const ask = await analystSays(thread, [el("p", { class: "ask" }, prompt)], delay, anchor);
+  return choose(thread, options, ask);
+}
+function nextBlock(label, onClick) {
+  const b = el("button", { class: "btn", type: "button" }, label);
+  b.addEventListener("click", onClick, { once: true });
+  return el("div", { class: "after reveal" }, el("div", { class: "next-row" }, b));
 }
 
 /* ---------- plate ---------- */
@@ -1290,39 +1299,17 @@ function renderPlate(i) {
     const r1 = await round(thread, p.prompt, p.options, scenario, 500);
     const o = r1.o;
     state.answers[q] = o.key;
-    const r2 = await round(thread, o.why.prompt, o.why.options, r1.note, 600);
+    const r2 = await round(thread, o.why.prompt, o.why.options, r1.mine, 700);
     state.answers[q + "w"] = r2.o.key;
-    const r3 = await round(thread, o.follow.prompt, o.follow.options, r2.note, 600);
+    const r3 = await round(thread, o.follow.prompt, o.follow.options, r2.mine, 700);
     state.answers[q + "f"] = r3.o.key;
-    const after = afterBlock(p, o, i);
+    const last = i === PLATES.length - 1;
+    const after = nextBlock(last ? "Two last questions" : "Next: plate " + PLATES[i + 1].numeral, () => last ? renderMirror() : renderPlate(i + 1));
     s.append(after);
-    bringIntoView(after, r3.note);
+    bringIntoView(after, r3.mine);
   })();
 }
 
-function afterBlock(p, chosen, i) {
-  const wrap = el("div", { class: "after reveal" });
-  wrap.append(el("div", { class: "reads" }, [el("span", { class: "label" }, "What this plate reads"), el("p", null, p.measures)]));
-
-  const others = el("details", { class: "fold" }, el("summary", null, "How the other answers read"));
-  const ob = el("div", { class: "fold-body" });
-  p.options.filter(o => o !== chosen).forEach(o => {
-    const [, value, argument] = o.case.match(/^([^.]*)\.\s*(.*)$/);
-    ob.append(el("div", { class: "other" }, [
-      el("p", { class: "q" }, "“" + o.text + "”"),
-      el("h4", null, o.title),
-      el("p", { class: "case" }, [el("b", null, value + ". "), argument]),
-      el("p", null, o.body)
-    ]));
-  });
-  others.append(ob);
-
-  const last = i === PLATES.length - 1;
-  const next = el("button", { class: "btn", type: "button" }, last ? "Continue to the mirror" : "Next: plate " + PLATES[i + 1].numeral);
-  next.addEventListener("click", () => last ? renderMirror() : renderPlate(i + 1));
-  wrap.append(others, researchFold("The research behind this plate", p.research), el("div", { class: "next-row" }, next));
-  return wrap;
-}
 function researchFold(label, items) {
   const fold = el("details", { class: "fold" }, el("summary", null, label));
   const list = el("ul", { class: "refs" });
@@ -1340,7 +1327,7 @@ function renderMirror() {
   const m = clear();
   const s = el("section", { class: "plate" });
   const h = el("h2", { tabindex: "-1" }, "The mirror");
-  const intro = el("p", { class: "scenario" }, "You have answered five dilemmas about other people. Before the reading, the analyst turns the questions around.");
+  const intro = el("p", { class: "scenario" }, "You have answered five dilemmas about other people. Before you finish, the analyst turns the questions around.");
   const thread = el("div", { class: "thread", "aria-live": "polite" });
   s.append(el("p", { class: "eyebrow" }, "Closing round · How you see yourself"), h, intro, thread);
   m.append(s);
@@ -1350,31 +1337,79 @@ function renderMirror() {
   (async () => {
     const r1 = await round(thread, MIRROR[0].prompt, MIRROR[0].options, intro, 500);
     state.answers.m1 = r1.o.key;
-    const r2 = await round(thread, MIRROR[1].prompt, MIRROR[1].options, r1.note, 600);
+    const r2 = await round(thread, MIRROR[1].prompt, MIRROR[1].options, r1.mine, 700);
     state.answers.m2 = r2.o.key;
-    const go = el("button", { class: "btn", type: "button" }, "See my reading");
-    go.addEventListener("click", finish);
-    const after = el("div", { class: "after reveal" }, [researchFold("The research behind the mirror", MIRROR_RESEARCH), el("div", { class: "next-row" }, go)]);
+    const after = nextBlock("Finish and send", finish);
     s.append(after);
-    bringIntoView(after, r2.note);
+    bringIntoView(after, r2.mine);
   })();
 }
 
-/* ---------- results ---------- */
+/* ---------- end of the session ---------- */
 function finish() {
-  const a = state.answers;
-  try { history.replaceState(null, "", hashOf(a, state.name)); } catch (e) { /* file:// or sandboxed */ }
-  renderResults(a, state.name, false);
+  const a = state.answers, name = state.name;
+  setProgress(PLATES.length + 1);
+  const m = clear();
+  const status = el("p", { class: "status", role: "status" });
+  const retry = el("button", { class: "btn ghost", type: "button", hidden: true }, "Try sending again");
+  m.append(el("section", { class: "intro" }, [
+    blot(404, 2, "A symmetrical inkblot in black and red"),
+    el("p", { class: "eyebrow" }, "Session complete"),
+    el("h1", null, "Thank you, " + name + "."),
+    el("p", { class: "lede" }, "That's everything. Your answers go only to the person who shared this page with you. You can close this tab."),
+    el("div", { class: "row" }, [retry, status])
+  ]));
+  window.scrollTo({ top: 0, behavior: "auto" });
+  if (!RESPONSE_ENDPOINT) { status.textContent = "Recording is not set up, so these answers were not saved."; return; }
+  const send = () => {
+    retry.hidden = true;
+    status.textContent = "Sending your answers…";
+    saveResponse(a, name, profileOf(a)).then(ok => {
+      status.textContent = ok ? "Your answers were sent." : "Your answers could not be sent. Check your connection and try again.";
+      retry.hidden = ok;
+    });
+  };
+  retry.addEventListener("click", send);
+  send();
 }
 
-function renderResults(a, name, shared) {
-  setProgress(PLATES.length + 1);
+/* ---------- private readings (owner only) ---------- */
+function renderLock(a, name) {
+  setProgress(-1);
+  const m = clear();
+  const input = el("input", { id: "pass", name: "pass", type: "password", autocomplete: "current-password", placeholder: "Passphrase", "aria-describedby": "pass-hint" });
+  const err = el("p", { class: "err", hidden: true });
+  const form = el("form", { class: "start", novalidate: true }, [
+    el("label", { class: "label", for: "pass" }, "Owner passphrase"),
+    el("div", { class: "start-row" }, [input, el("button", { class: "btn", type: "submit" }, "Open reading")]),
+    err,
+    el("p", { class: "hint", id: "pass-hint" }, "This browser remembers it, so you only enter it once.")
+  ]);
+  form.addEventListener("submit", async e => {
+    e.preventDefault();
+    const v = input.value.trim().toLowerCase();
+    if (!window.crypto || !crypto.subtle) { err.textContent = "This browser can't check the passphrase on this connection. Open the https link instead."; err.hidden = false; return; }
+    if (!(await isOwner(v))) { err.textContent = "That passphrase doesn't match."; err.hidden = false; input.select(); return; }
+    try { localStorage.setItem(OWNER_KEY, v); } catch (x) { /* private window: unlocked for this visit only */ }
+    renderResults(a, name);
+  });
+  m.append(el("section", { class: "intro" }, [
+    el("p", { class: "eyebrow" }, "Private reading"),
+    el("h1", null, "This reading is private."),
+    el("p", { class: "lede" }, "Only the person who shared this questionnaire can open readings. If that's you, enter your passphrase."),
+    form
+  ]));
+  input.focus();
+}
+
+function renderResults(a, name) {
+  setProgress(-1);
   const pr = profileOf(a);
   const m = clear();
   const r = el("section", { class: "result" });
 
   r.append(el("div", { class: "r-hero" }, [
-    el("p", { class: "eyebrow" }, (shared ? "Shared reading for " : "Reading for ") + name),
+    el("p", { class: "eyebrow" }, "Reading for " + name),
     el("h1", null, pr.pair.name),
     el("p", { class: "tag" }, pr.pair.tag)
   ]));
@@ -1386,11 +1421,11 @@ function renderResults(a, name, shared) {
     el("span", { class: "t-val" }, String(pr.pct[k])),
     el("p", { class: "t-desc" }, TRAIT[k].desc)
   ])));
-  r.append(el("div", { class: "section" }, [el("h2", null, "Your six signals"), el("p", { class: "hint" }, "0 to 100: where your answers fell between the lowest and highest possible score."), traits]));
+  r.append(el("div", { class: "section" }, [el("h2", null, "Six signals"), el("p", { class: "hint" }, "0 to 100: where the answers fell between the lowest and highest possible score."), traits]));
 
   const top = PROFILES[pr.top], sec = PROFILES[pr.second];
   r.append(el("div", { class: "section" }, [
-    el("h2", null, "The core of you"),
+    el("h2", null, "The core"),
     el("div", { class: "prose" }, [
       el("p", null, top.core),
       el("p", null, "Second: " + TRAIT[pr.second].name.toLowerCase() + ". " + sec.mod)
@@ -1403,11 +1438,11 @@ function renderResults(a, name, shared) {
   ]));
 
   const pats = pr.patterns.length ? pr.patterns : [{
-    title: "Where your instincts collide",
+    title: "Where the instincts collide",
     body: TRAIT[pr.top].name + " pulled hardest and " + TRAIT[pr.low].name.toLowerCase() + " least. When they conflict, expect the first to decide."
   }];
   r.append(el("div", { class: "section" }, [
-    el("h2", null, "Patterns across your answers"),
+    el("h2", null, "Patterns across the answers"),
     el("div", { class: "patterns" }, pats.map(p => el("div", { class: "pattern" }, [el("h3", null, p.title), el("p", null, p.body)])))
   ]));
 
@@ -1420,13 +1455,13 @@ function renderResults(a, name, shared) {
   const meter = el("div", { class: "meter", role: "img", "aria-label": pr.held + " of " + pr.counted + " positions held" });
   for (let k = 0; k < pr.counted; k++) meter.append(el("span", { class: k < pr.held ? "on" : "" }));
   r.append(el("div", { class: "section" }, [
-    el("h2", null, "How you hold a position"),
+    el("h2", null, "How a position is held"),
     el("div", { class: "row" }, [meter, el("span", { class: "status" }, pr.held + " of " + pr.counted + " held under pressure · " + flex[0])]),
     el("p", { class: "prose" }, flex[1])
   ]));
 
   r.append(el("div", { class: "blind" }, [
-    el("p", { class: "eyebrow" }, "Your blind spot"),
+    el("p", { class: "eyebrow" }, "Blind spot"),
     el("h3", null, TRAIT[pr.low].name),
     el("p", null, PROFILES[pr.low].low)
   ]));
@@ -1434,26 +1469,33 @@ function renderResults(a, name, shared) {
   if (a.m1 && a.m2) {
     const m1 = MIRROR[0].options.find(o => o.key === a.m1), m2 = MIRROR[1].options.find(o => o.key === a.m2);
     r.append(el("div", { class: "section" }, [
-      el("h2", null, "How you see yourself"),
+      el("h2", null, "Self-view"),
       el("p", { class: "prose" }, mirrorSummary(a.m1, a.m2)),
       el("div", { class: "mirror-pair" }, [
         el("div", { class: "facet" }, [el("span", { class: "label" }, "Compared with others: " + m1.text.replace(/\.$/, "").toLowerCase()), el("h3", null, m1.title), el("p", null, m1.body)]),
         el("div", { class: "facet" }, [el("span", { class: "label" }, "Answered: " + m2.text.replace(/\.$/, "").toLowerCase()), el("h3", null, m2.title), el("p", null, m2.body)])
-      ])
+      ]),
+      researchFold("Research", MIRROR_RESEARCH)
     ]));
   }
 
+  // Every answer with the analyst's remark on it; the person answering never saw these.
+  const pick = (label, x, daily) => el("div", { class: "pick" }, [
+    el("p", { class: "ans" }, [el("span", { class: "lab" }, label), x.text]),
+    el("p", { class: "note" }, [el("b", null, x.title + ". "), x.body]),
+    daily ? el("p", { class: "note" }, [el("span", { class: "lab" }, "In daily life"), daily]) : null
+  ]);
   const recap = el("ol", { class: "recap" });
   picks(a).forEach(({ p, o, w, f }) => recap.append(el("li", null, [
     el("span", { class: "num" }, "Plate " + p.numeral),
     el("div", { class: "body" }, [
       el("span", { class: "t" }, p.title),
-      el("p", { class: "ans" }, [el("span", { class: "lab" }, "Chose"), o.text + " ", el("span", null, "(" + o.title + ")")]),
-      el("p", { class: "ans" }, [el("span", { class: "lab" }, "Because"), w.text + " ", el("span", null, "(" + w.title + ")")]),
-      el("p", { class: "ans" }, [el("span", { class: "lab" }, "Then"), f.text + " ", el("span", null, "(" + f.title + ")")])
+      el("p", { class: "hint" }, p.measures),
+      pick("Chose", o, o.daily), pick("Because", w), pick("Then", f),
+      researchFold("Research", p.research)
     ])
   ])));
-  r.append(el("div", { class: "section" }, [el("h2", null, "Your answers, one by one"), recap]));
+  r.append(el("div", { class: "section" }, [el("h2", null, "Answer by answer"), recap]));
 
   const refs = el("ul", { class: "refs" });
   FRAMEWORKS.forEach(x => refs.append(el("li", null, [el("p", null, x.use), el("p", { class: "cite" }, el("a", { href: x.url, target: "_blank", rel: "noopener" }, x.cite))])));
@@ -1468,29 +1510,25 @@ function renderResults(a, name, shared) {
     const fallback = () => { linkBox.hidden = false; linkBox.focus(); linkBox.select(); status.textContent = "Select and copy the link below."; };
     try { navigator.clipboard.writeText(link).then(done, fallback); } catch (e) { fallback(); }
   });
-  const again = el("button", { class: "btn ghost", type: "button" }, shared ? "Take it yourself" : "Start over");
-  again.addEventListener("click", () => {
-    state = { name: shared ? "" : state.name, answers: {}, saved: false };
+  const lock = el("button", { class: "btn ghost", type: "button" }, "Lock this browser");
+  lock.addEventListener("click", () => {
+    try { localStorage.removeItem(OWNER_KEY); } catch (e) { /* ignore */ }
     try { history.replaceState(null, "", location.pathname + location.search); } catch (e) { /* ignore */ }
+    state = { name: "", answers: {} };
     renderIntro();
     window.scrollTo({ top: 0 });
   });
-  const saveLine = el("p", { class: "status", role: "status" });
-  r.append(el("div", { class: "section" }, [el("div", { class: "row" }, [copy, again, status]), linkBox, saveLine]));
+  r.append(el("div", { class: "section" }, [
+    el("p", { class: "hint" }, "Readings open only in a browser where your passphrase has been entered."),
+    el("div", { class: "row" }, [copy, lock, status]),
+    linkBox
+  ]));
 
   m.append(r);
   window.scrollTo({ top: 0, behavior: "auto" });
-
-  if (!shared && RESPONSE_ENDPOINT && !state.saved) {
-    saveLine.textContent = "Sending your answers…";
-    saveResponse(a, name, pr).then(ok => {
-      saveLine.textContent = ok ? "Your answers were sent to the person who shared this page." : "Your answers could not be sent. Check your connection and use Copy link to share this reading instead.";
-    });
-  }
 }
 
 function saveResponse(a, name, pr) {
-  state.saved = true;
   const columns = ["Name", "Profile", "Strongest traits"];
   const values = [name, pr.pair.name, TRAIT[pr.top].name + " + " + TRAIT[pr.second].name];
   picks(a).forEach(({ p, o, w, f }) => {
@@ -1516,14 +1554,10 @@ function readHash() {
   const params = new URLSearchParams(location.hash.slice(1));
   return { a: answersFromCode(params.get("r"), params.get("m")), name: (params.get("n") || "someone").slice(0, 60) };
 }
-function route() {
+async function route() {
   const { a, name } = readHash();
-  if (a) {
-    const own = state.saved && codeOf(state.answers) === codeOf(a);
-    renderResults(a, name, !own);
-    return;
-  }
-  renderIntro();
+  if (!a) { renderIntro(); return; }
+  if (await isOwner(storedPass())) renderResults(a, name); else renderLock(a, name);
 }
 window.addEventListener("hashchange", () => { if (readHash().a) route(); });
 route();
