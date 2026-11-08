@@ -41,7 +41,7 @@ The full reading also lists every answer with the analyst's one- or two-line rem
 
 ## Who sees the readings
 
-Only the owner. Each row in the Sheet has a **Reading link** (`#r=<answer code>&m=<mirror>&n=<name>`). Each plate is coded as choice letter, reason letter and twist number, for example `Bb2`. Opening a link asks for the owner passphrase once per browser, and after that readings open directly. **Lock this browser** at the bottom of a reading makes it forget the passphrase.
+Only the owner. Each row in the Sheet has a **Reading link** (`#r=<answer code>&m=<mirror>&n=<name>`). Each plate is coded as choice letter, reason letter and twist number, for example `Bb2`. An unfinished session stops part-way, for example `Bb2.Aa.-.-.-`. Opening a link asks for the owner passphrase once per browser, and after that readings open directly. **Lock this browser** at the bottom of a reading makes it forget the passphrase.
 
 The page stores only a SHA-256 hash of the passphrase (`OWNER_HASH` in `index.html`), never the passphrase itself. To change it, put the SHA-256 hex of the new passphrase in `OWNER_HASH`:
 
@@ -67,7 +67,24 @@ A static page cannot write to a database by itself, so answers go to a small Goo
 4. Click **Deploy**, approve the permissions prompt (it only needs access to this Sheet), and copy the **Web app URL** (it ends in `/exec`).
 5. In `index.html`, paste that URL into `const RESPONSE_ENDPOINT = "";` near the top of the script. Then commit and push.
 
-From then on, every finished run adds a row to the **Responses** tab with the person's name, the choice, reason and twist for each plate, both mirror answers, the profile name, six trait scores, the matched patterns, and a link that reopens their full reading. Respondents are told on the first screen that their name and answers will be sent to you.
+From then on, every session gets one row in the **Responses** tab. The row holds:
+
+- the person's name;
+- the choice, reason and twist for each plate, and both mirror answers;
+- the profile name, six trait scores and the matched patterns;
+- a link that reopens their full reading;
+- **Status** (*Complete*, or *Incomplete (stopped before …)*), **Answers given** (out of 17), and a **Session** id.
+
+**Unfinished sessions are kept.** The page saves after every answer and the script updates that session's row in place, so someone who stops after one answer still has a row. Their reading is built from the answers they gave. Answers the person never reached are left blank, and so is any trait those answers don't touch. The reading is marked as incomplete.
+
+### Updating the script
+
+Saving after every answer needs version 2 of `Code.gs`. Until the script is updated, the page saves once, at the end. To update it without changing the URL:
+
+1. Open the Sheet, then **Extensions → Apps Script**. Replace the code with the new `Code.gs` and save.
+2. Click **Deploy → Manage deployments**, click the pencil icon, set **Version** to **New version**, and click **Deploy**.
+
+Opening the `/exec` URL should then show `"version":2`. Respondents are told on the first screen that their name and answers will be sent to you.
 
 To check that a response arrived, open the Sheet and look at the **Responses** tab at the bottom (the script creates it; *Sheet1* stays empty). You can also open the script at [script.google.com](https://script.google.com) → your project → **Executions**. Each `doPost` run listed as *Completed* is one saved response.
 
