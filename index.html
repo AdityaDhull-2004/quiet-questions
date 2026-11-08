@@ -4,12 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>The Quiet Questions</title>
-<meta name="description" content="Five everyday dilemmas, a follow-up for each, and a research-based reading of what your answers say about you.">
+<meta name="description" content="Five everyday dilemmas as a short session: what you'd do, why, and a twist, followed by a research-based reading of what your answers say about you.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gloock&family=IBM+Plex+Mono:wght@400;500&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap">
 <style>
-/* Layout: one reading column like a clinician's case file; each dilemma is a numbered plate with its own generated inkblot. */
+/* Layout: one reading column like a clinician's case file; each dilemma is a plate with its own inkblot, then a session thread between the analyst and the person answering. */
 :root {
   --paper: #F3F4F6;
   --sunk: #E7E9ED;
@@ -68,10 +68,10 @@ header.top {
 }
 .wordmark { font-family: var(--f-display); font-size: 1.2rem; }
 .wordmark i { font-style: normal; color: var(--red); }
-.progress { display: flex; gap: 0.4rem; align-items: center; }
+.progress { display: flex; gap: 0.35rem; align-items: center; }
 .progress .dot {
   width: 1.75rem; height: 1.75rem; border-radius: 50%; border: 1px solid var(--rule);
-  display: grid; place-items: center; font-family: var(--f-mono); font-size: 0.66rem; color: var(--ink-2);
+  display: grid; place-items: center; font-family: var(--f-mono); font-size: 0.64rem; color: var(--ink-2);
 }
 .progress .dot.now { border-color: var(--ink); color: var(--ink); }
 .progress .dot.done { background: var(--ink); border-color: var(--ink); color: var(--paper); }
@@ -79,7 +79,6 @@ header.top {
 main { padding-block: 2.25rem 3.5rem; }
 .eyebrow { font-family: var(--f-mono); font-size: 0.74rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--red); }
 .label { font-family: var(--f-mono); font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-2); }
-.stack { display: grid; gap: 1rem; }
 
 /* inkblot plate */
 .blot {
@@ -90,13 +89,17 @@ main { padding-block: 2.25rem 3.5rem; }
   from { clip-path: inset(0 50% 0 50%); opacity: 0.3; }
   to { clip-path: inset(0 0 0 0); opacity: 1; }
 }
-.reveal { animation: rise 420ms ease-out both; }
+.reveal { animation: rise 380ms ease-out both; }
 @keyframes rise { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 
 /* intro */
 .intro { display: grid; gap: 1.25rem; }
 .intro .blot { width: min(100%, 30rem); margin-inline: auto; }
 .lede { font-size: 1.18rem; color: var(--ink-2); max-width: 36rem; }
+.steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(9.5rem, 1fr)); gap: 0.6rem; }
+.step { display: grid; gap: 0.2rem; padding: 0.8rem 0.95rem; border: 1px solid var(--rule); border-radius: 6px; min-width: 0; }
+.step b { font-family: var(--f-display); font-weight: 400; font-size: 1.1rem; }
+.step span { font-size: 0.92rem; color: var(--ink-2); }
 .plate-list { list-style: none; margin: 0.5rem 0 0; padding: 0; border-top: 1px solid var(--rule); }
 .plate-list li {
   display: grid; grid-template-columns: 4.5rem 1fr; gap: 0.25rem 1rem; padding-block: 0.7rem;
@@ -126,35 +129,37 @@ main { padding-block: 2.25rem 3.5rem; }
 .btn.ghost:hover { background: var(--sunk); color: var(--ink); border-color: var(--ink); }
 .btn:focus-visible { outline: 2px solid var(--red); outline-offset: 2px; }
 
-/* plate */
+/* plate + session thread */
 .plate { display: grid; gap: 1.1rem; }
 .plate h2:focus { outline: none; }
 .scenario { font-size: 1.16rem; }
-.prompt { font-family: var(--f-display); font-size: var(--s-1); }
-.options { display: grid; gap: 0.55rem; }
-.opt {
-  display: grid; grid-template-columns: 1.6rem 1fr; gap: 0.7rem; align-items: baseline; width: 100%;
-  padding: 0.85rem 1rem; text-align: left; color: var(--ink); background: var(--card);
-  border: 1px solid var(--rule); border-radius: 6px; cursor: pointer;
-  transition: border-color .15s, background-color .15s, opacity .25s;
+.thread { display: grid; gap: 0.8rem; margin-top: 0.6rem; }
+.msg { display: grid; gap: 0.45rem; max-width: 36rem; min-width: 0; padding: 0.95rem 1.15rem 1rem; background: var(--sunk); border-radius: 4px 16px 16px 16px; scroll-margin-top: 1.5rem; }
+.msg .who { font-family: var(--f-mono); font-size: 0.66rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--red); }
+.msg .ask { font-family: var(--f-display); font-size: var(--s-1); line-height: 1.25; }
+.msg h3 { font-size: 1.4rem; }
+.msg .daily { color: var(--ink-2); font-size: 0.97rem; }
+.msg .daily .label { margin-right: 0.5rem; }
+.msg.you { justify-self: end; max-width: 30rem; background: var(--ink); color: var(--paper); border-radius: 16px 4px 16px 16px; }
+.msg.you .who { color: var(--paper); opacity: 0.7; }
+.typing { display: flex; gap: 0.35rem; width: fit-content; padding: 0.95rem 1.1rem; }
+.typing span { width: 0.42rem; height: 0.42rem; border-radius: 50%; background: var(--ink-2); animation: blink 1s infinite ease-in-out; }
+.typing span:nth-child(2) { animation-delay: 0.15s; }
+.typing span:nth-child(3) { animation-delay: 0.3s; }
+@keyframes blink { 0%, 80%, 100% { opacity: 0.25; } 40% { opacity: 1; } }
+.choices { display: grid; gap: 0.5rem; justify-self: end; width: min(100%, 32rem); }
+.choice {
+  display: grid; grid-template-columns: 1.4rem 1fr; gap: 0.6rem; align-items: baseline; width: 100%;
+  padding: 0.75rem 1rem; text-align: left; color: var(--ink); background: var(--card);
+  border: 1px solid var(--rule); border-radius: 16px 4px 16px 16px; cursor: pointer;
+  transition: border-color .15s, background-color .15s;
 }
-.opt .k { font-family: var(--f-mono); font-size: 0.8rem; color: var(--ink-2); }
-.opt:hover { border-color: var(--ink); }
-.opt:focus-visible { outline: 2px solid var(--red); outline-offset: 2px; }
-.options.locked .opt { cursor: default; }
-.options.locked .opt:hover { border-color: var(--rule); }
-.opt.picked, .options.locked .opt.picked:hover { background: var(--ink); color: var(--paper); border-color: var(--ink); }
-.opt.picked .k { color: var(--paper); }
-.opt.faded { opacity: 0.42; }
+.choice .k { font-family: var(--f-mono); font-size: 0.78rem; color: var(--ink-2); }
+.choice:hover { border-color: var(--ink); }
+.choice:focus-visible { outline: 2px solid var(--red); outline-offset: 2px; }
 
-.note { display: grid; gap: 0.55rem; padding: 1.3rem 1.3rem 1.15rem; background: var(--sunk); border-radius: 6px; }
-.note h3 { font-size: var(--s-2); }
-.note .daily { color: var(--ink-2); font-size: 0.98rem; }
-.note .daily .label { margin-right: 0.5rem; }
-.follow { display: grid; gap: 1rem; margin-top: 1.25rem; padding-top: 1.6rem; border-top: 1px dashed var(--rule); }
-.after { display: grid; gap: 0.9rem; margin-top: 1.25rem; }
+.after { display: grid; gap: 0.9rem; margin-top: 1.25rem; padding-top: 1.25rem; border-top: 1px dashed var(--rule); }
 .reads { padding: 1rem 1.2rem; border: 1px solid var(--rule); border-radius: 6px; display: grid; gap: 0.3rem; }
-
 details.fold { border-top: 1px solid var(--rule); padding-top: 0.8rem; }
 details.fold > summary {
   cursor: pointer; list-style: none; display: flex; justify-content: space-between; gap: 1rem; align-items: baseline;
@@ -168,7 +173,6 @@ details.fold > summary:focus-visible { outline: 2px solid var(--red); outline-of
 .other { display: grid; gap: 0.35rem; }
 .other .q { font-style: italic; color: var(--ink-2); }
 .other h4 { margin: 0; font-family: var(--f-display); font-weight: 400; font-size: 1.15rem; }
-.other .case { font-size: 0.98rem; }
 .other .case b { font-weight: 500; color: var(--red); }
 .refs { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.9rem; }
 .refs li { display: grid; gap: 0.2rem; }
@@ -198,10 +202,12 @@ details.fold > summary:focus-visible { outline: 2px solid var(--red); outline-of
 .patterns { display: grid; gap: 1.25rem; }
 .pattern { display: grid; gap: 0.35rem; padding-left: 1rem; border-left: 2px solid var(--red); }
 .pattern h3 { font-size: 1.25rem; }
+.row { display: flex; flex-wrap: wrap; gap: 0.6rem; align-items: center; }
 .meter { display: flex; gap: 0.35rem; }
 .meter span { width: 1.6rem; height: 0.6rem; border-radius: 2px; background: var(--sunk); border: 1px solid var(--rule); }
 .meter span.on { background: var(--ink); border-color: var(--ink); }
 .blind { padding: 1.2rem 1.3rem; background: var(--red-wash); border-radius: 6px; display: grid; gap: 0.5rem; }
+.mirror-pair { display: grid; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); gap: 0.75rem; }
 .recap { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--rule); }
 .recap li { display: grid; grid-template-columns: 4.5rem 1fr; gap: 0.2rem 1rem; padding-block: 0.85rem; border-bottom: 1px solid var(--rule); }
 .recap .num { font-family: var(--f-mono); font-size: 0.78rem; color: var(--red); padding-top: 0.25rem; }
@@ -209,7 +215,7 @@ details.fold > summary:focus-visible { outline: 2px solid var(--red); outline-of
 .recap .t { font-family: var(--f-display); font-size: 1.1rem; }
 .recap .ans { font-size: 0.96rem; }
 .recap .ans span { color: var(--ink-2); }
-.actions { display: flex; flex-wrap: wrap; gap: 0.6rem; align-items: center; }
+.recap .ans .lab { font-family: var(--f-mono); font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; margin-right: 0.35rem; }
 .status { font-family: var(--f-mono); font-size: 0.75rem; color: var(--ink-2); }
 .linkbox { width: 100%; padding: 0.6rem 0.7rem; font-family: var(--f-mono); font-size: 0.78rem; color: var(--ink); background: var(--card); border: 1px solid var(--rule); border-radius: 4px; }
 
@@ -220,9 +226,10 @@ details.fold > summary:focus-visible { outline: 2px solid var(--red); outline-of
   .t-bar { grid-column: 1 / -1; grid-row: 2; }
   .plate-list li, .recap li { grid-template-columns: 1fr; }
   .plate-list .th { grid-column: 1; }
+  .msg, .msg.you, .choices { max-width: 100%; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .blot, .reveal, .t-bar span { animation: none; }
+  .blot, .reveal, .t-bar span, .typing span { animation: none; }
 }
 </style>
 </head>
@@ -233,18 +240,18 @@ details.fold > summary:focus-visible { outline: 2px solid var(--red); outline-of
     <nav class="progress" id="progress" aria-label="Progress" hidden></nav>
   </header>
   <main id="app">
-    <noscript><p>This page needs JavaScript to run the questions.</p></noscript>
+    <noscript><p>This page needs JavaScript to run the session.</p></noscript>
   </main>
   <footer class="foot">
-    <p>Built on published research in moral psychology and behavioural economics. Sources are listed under every plate.</p>
-    <p>A reflective exercise, not a clinical or validated psychological test. Five answers cannot capture a whole person.</p>
+    <p>Built on published research in moral psychology and behavioural economics. Sources are listed after every plate.</p>
+    <p>A reflective exercise, not a clinical or validated psychological test. A few answers cannot capture a whole person.</p>
   </footer>
 </div>
 <script>
 (() => {
 "use strict";
 
-// Paste your Google Apps Script web-app URL here to record every finished run in your Google Sheet (see README).
+// Paste your Google Apps Script web-app URL here to record every finished session in your Google Sheet (see README).
 const RESPONSE_ENDPOINT = "";
 
 /* ---------- traits ---------- */
@@ -260,8 +267,9 @@ const TRAIT = Object.fromEntries(TRAITS.map(t => [t.k, t]));
 const ORDER = "CAILTP";
 
 /* ---------- the five plates ----------
-   score: points added to each trait. held: true if the follow-up answer kept the first stance,
-   false if it moved, null where the follow-up does not test a stance. */
+   Each plate is a three-round session: the choice, the reason behind it (why), and a twist (follow).
+   score: points added to each trait. held: true if the twist answer kept the first stance,
+   false if it moved, null where the twist does not test a stance. */
 const PLATES = [
 {
   numeral: "I", seed: 1931, reds: 0,
@@ -269,83 +277,133 @@ const PLATES = [
   theme: "Generosity and control",
   scenario: "A man outside a shop asks you for some money. His breath smells of alcohol, and you are fairly sure that whatever you give will go on another bottle, not a meal. You have spare change, and giving it would cost you nothing that matters.",
   prompt: "What do you do?",
-  measures: "Whether your generosity is about the person, the outcome, or your own comfort, and how much control you attach to the help you give.",
+  measures: "Whether your generosity is about him, the outcome, or your own comfort.",
   options: [
     { key: "A", text: "Give him the money. What he does with it is his business.", score: { A: 2, C: 1 },
       title: "Help without strings",
-      body: "You separate the act of helping from the right to decide how help is used. To you, a gift with conditions attached is only half a gift. People who answer this way tend to see adults as the authors of their own lives, including the bad chapters, and they are uncomfortable playing judge over a stranger's choices. There is humility in it too: you do not assume you know better than he does what gets him through the night.",
-      daily: "You are probably the friend who gives advice only when asked and lets people make their own mistakes.",
-      case: "Respect for autonomy. A gift with conditions is control, and an adult gets to decide how to survive.",
+      body: "You keep helping and controlling separate. He is an adult, and how he gets through the night is his call, not yours.",
+      daily: "You give advice only when asked and let people make their own mistakes.",
+      case: "Respect for autonomy. A gift with conditions is control.",
+      why: { prompt: "What's the main reason you'd give?",
+        options: [
+          { key: "a", text: "It's his life. I don't get to decide how he survives.", score: { A: 1 },
+            title: "Autonomy as a value",
+            body: "You give because his choices are his. You reject paternalism even when you expect a bad choice." },
+          { key: "b", text: "Saying no to someone's face feels worse than the risk.", score: { C: 1, P: 1 },
+            title: "Easing your own discomfort",
+            body: "Part of the gift is for you: it ends an awkward moment. In Batson's experiments, people helping to relieve their own distress mostly left when leaving was easy." },
+          { key: "c", text: "It costs me little, and it might get him through tonight.", score: { C: 2 },
+            title: "Harm reduction",
+            body: "You look at tonight's suffering, not his choices. Meet people where they are." }
+        ] },
       follow: { prompt: "He thanks you, then asks for one more thing. The shop won't serve him. Would you go in and buy the bottle for him with that same money?",
         options: [
           { key: "A1", text: "Yes. Same money, same choice, his decision.", score: { A: 2, I: 1 }, held: true,
-            title: "Consistent all the way down",
-            body: "You applied your principle even when it became uncomfortable. Many people who hand over cash freely refuse at this point, which shows their comfort depended on distance from the outcome. Yours does not. You treat his autonomy as real rather than as a convenient reason to skip the hard question. The risk on this side is that addiction itself erodes free choice, so respecting the choice can end up meaning respecting the addiction." },
+            title: "Consistent all the way",
+            body: "You held your principle when it got uncomfortable; most cash-givers stop here. The catch: addiction erodes the very choice you are respecting." },
           { key: "A2", text: "No. Giving cash is fine, but buying the bottle myself feels wrong.", score: { C: 1, P: 1 }, held: false,
             title: "Comfortable at a distance",
-            body: "This is the most human answer on the page. The outcome is identical, yet doing it with your own hands feels different. Moral psychologists describe an action principle and a contact principle: we judge harm we cause directly more harshly than harm we merely enable, even when the result is the same. Your generosity is real, and part of what it protects is the feeling of being a good person. Cash leaves the moral responsibility with him. The bottle would put it in your hands." }
+            body: "Same outcome, but doing it with your own hands feels worse. We judge harm we cause more harshly than harm we enable." }
         ] } },
     { key: "B", text: "Buy him food instead. I'll help, but not with alcohol.", score: { C: 2, A: -1 },
       title: "Care with a steering wheel",
-      body: "You want to help, and you want your help to do good by your own standards. Economists call this paternalistic altruism: caring about someone's wellbeing as you define it rather than as they would. It is very common. In one experiment, donors gave about 40% more when they could give a smoker nicotine patches instead of cash, and when they could choose, over 90% of donations were given in kind. Your instinct protects him from harm and protects you from feeling complicit.",
-      daily: "You probably show love through practical help, and it stings when people don't use your help the way you meant it.",
-      case: "Responsible care. I want to help the person, not the addiction.",
+      body: "You want to help, on your terms. This is paternalistic altruism: in one experiment donors gave about 40% more when they could give in kind instead of cash.",
+      daily: "You show love through practical help, and it stings when it's used differently.",
+      case: "Responsible care. Help the person, not the addiction.",
+      why: { prompt: "Why food and not money?",
+        options: [
+          { key: "a", text: "Money would make his drinking worse.", score: { C: 1, A: -1 },
+            title: "Protective care",
+            body: "You think cash would hurt him. Cash-transfer studies find this fear is usually overstated, though addiction is a harder case." },
+          { key: "b", text: "I want to know my help is used properly.", score: { P: 1, A: -1 },
+            title: "Accountability",
+            body: "You need to know your gift did what you meant it to. Your giving is also a statement of your values." },
+          { key: "c", text: "Food is what everyone needs. It's the safest kind of help.", score: { C: 1, I: 1 },
+            title: "Help that can't go wrong",
+            body: "You pick the safest help: no refusing, no enabling, no judging." }
+        ] },
       follow: { prompt: "You hand him a sandwich. He says politely, \"Thanks, but I'm not hungry. I really just need the money.\" How do you feel?",
         options: [
           { key: "B1", text: "Fair enough. I'd give him a little cash too.", score: { A: 2, C: 1 }, held: false,
             title: "You listen and adjust",
-            body: "You started with your own idea of what help looks like, then changed course when he spoke for himself. That is a valuable trait: help that responds to the person in front of you instead of your picture of them. People like this often make good carers, teachers and managers because they can drop a plan once it stops fitting the person." },
+            body: "You dropped your plan once he spoke for himself. Your help follows the person, not your picture of them." },
           { key: "B2", text: "A bit irritated. I offered help and he turned it down.", score: { A: -1, P: 1 }, held: true,
             title: "Help on your terms",
-            body: "The irritation is worth noticing. It suggests the help was partly an expression of your own values, so a refusal felt like a refusal of you. Help that looks unconditional often carries an unspoken expectation of gratitude or compliance. In close relationships this can show up as feeling unappreciated when someone ignores your advice. The care is genuine. The strings are invisible, even to you." },
+            body: "The irritation shows a hidden condition: take my help my way. Watch for it when people ignore your advice." },
           { key: "B3", text: "Calm. Food is what I'm willing to give, and that's that.", score: { I: 1, P: 1 }, held: true,
-            title: "Firm boundaries, no resentment",
-            body: "You set a limit and keep it without anger. You are not trying to control him and you are not offended by his choice. You simply decide what you will take part in. This is the healthiest form of paternalistic giving: clear about your own line and relaxed about other people's." }
+            title: "Firm, without resentment",
+            body: "You keep your line and don't take his refusal personally. The healthiest form of conditional giving." }
         ] } },
     { key: "C", text: "Give nothing. I won't fund an addiction.", score: { P: 2, I: 1, C: -1 },
       title: "The gatekeeper",
-      body: "You judge help by its consequences. If the likely result is harm, you would rather give nothing than feed the problem. Researchers who study the deservingness heuristic find that people decide whom to help with one fast question: is this need caused by bad luck or by the person's own choices? When a need looks self-inflicted, anger replaces compassion, and the switch happens quickly and mostly outside awareness. Your answer suggests you take responsibility seriously, both his and your own.",
-      daily: "You likely hold people to clear standards and dislike being taken advantage of. Others may read you as fair, firm, and hard to win over.",
-      case: "Responsible refusal. Money that feeds an addiction is not kindness.",
+      body: "You judge help by its outcome; if it feeds harm, you hold back. Most people make this call in a split second by asking one question: bad luck, or his own doing?",
+      daily: "You hold people to clear standards and hate being taken advantage of.",
+      case: "Responsible refusal. Money that feeds an addiction isn't kindness.",
+      why: { prompt: "What's behind the no?",
+        options: [
+          { key: "a", text: "Money would only feed the addiction and hurt him more.", score: { C: 1, I: 1 },
+            title: "Refusal as care",
+            body: "Your no is meant to protect him. You care as much as a giver does; you just disagree on what helps." },
+          { key: "b", text: "I shouldn't have to pay for someone else's choices.", score: { P: 2, C: -1 },
+            title: "Personal responsibility",
+            body: "His choices, his costs. Fair as a rule, harsh on people whose choices were shaped by things they never chose." },
+          { key: "c", text: "I've been tricked before. I don't trust street requests.", score: { P: 2 },
+            title: "Burned before",
+            body: "Experience taught you suspicion. It protects you, and it treats the next real case like the last fake one." }
+        ] },
       follow: { prompt: "Same man. This time you somehow know for certain the money will buy food for his child. Do you give?",
         options: [
           { key: "C1", text: "Yes, then I'd give.", score: { C: 2, I: 1 }, held: false,
             title: "Conditional compassion",
-            body: "Your generosity is there, but deservingness gates it. You help when the need looks innocent and hold back when it looks self-made. Studies in the US and Denmark found that support for helping depends mostly on whether a person seems lazy or unlucky, regardless of political views. The instinct keeps you from being exploited. Its cost is that addiction is rarely a simple choice, and the people who look least deserving are often the ones whose need is most severe." },
+            body: "Your generosity is real but gated by who seems to deserve it. The people who look least deserving often need help most." },
           { key: "C2", text: "Still no. I don't give money to people on the street.", score: { P: 2 }, held: true,
             title: "Policy over impulse",
-            body: "You run your giving on a rule instead of on the story in front of you. That protects you from manipulation and from decision fatigue, and many people with this answer give through organised channels instead. The trade-off is that a rule can shield you from feeling anything at all. If you never give on the street, check that it is a considered policy and not a way of never having to look." }
+            body: "You run on a rule, not the story in front of you. Make sure it's a decision, not a way to avoid looking." }
         ] } },
     { key: "D", text: "Walk past without really deciding.", score: { P: 1, T: -1 },
       title: "The quiet swerve",
-      body: "This is the most common answer that people rarely admit, and it is revealing: you avoided the choice instead of making it. In a field study outside a supermarket, when a charity collector stood at one door and said \"please give\", between 26% and 33% of shoppers avoided that door. The researchers concluded that people steer clear of situations that would make them feel empathy, because they know the empathy would cost them. Avoiding the ask protects your wallet and your self-image at the same time.",
-      daily: "When a situation threatens an uncomfortable feeling, your first move may be to step around it rather than through it.",
-      case: "Self-protection. I can't help everyone, and I don't have to make a decision every time.",
-      follow: { prompt: "Be honest. When you walk past someone like this, what are you mostly avoiding?",
+      body: "You avoided the choice instead of making it. In one field study, 26% to 33% of shoppers used another door to dodge a charity collector who asked directly.",
+      daily: "When a moment threatens an uncomfortable feeling, you step around it.",
+      case: "Self-protection. I can't help everyone, and I don't have to decide every time.",
+      why: { prompt: "Be honest. When you walk past someone like this, what are you mostly avoiding?",
         options: [
-          { key: "D1", text: "The awkwardness of the interaction.", score: { P: 1 }, held: null,
+          { key: "a", text: "The awkwardness of the interaction.", score: { P: 1 },
             title: "Social friction",
-            body: "For you the hard part is the encounter, not the money. You may be generous in settings you control, such as donating online, while street requests feel intrusive and unscripted. People with this answer often dislike being put on the spot in general: sales pitches, public speaking, open confrontation." },
-          { key: "D2", text: "The guilt of saying no to his face.", score: { C: 2, T: -1 }, held: null,
-            title: "Too much empathy, not too little",
-            body: "This answer usually belongs to people who feel a great deal. Psychologists describe empathy as partly motivated: we turn it up or down depending on what we expect it to cost us. You walk past because you know that if you stop, you will feel it, and the feeling is heavy. The avoidance is a way of regulating emotion, and it is not coldness." },
-          { key: "D3", text: "Nothing. Honestly, I don't think about it.", score: { C: -1, P: 1 }, held: null,
+            body: "The encounter is the hard part, not the money. You may give happily online and still hate being put on the spot." },
+          { key: "b", text: "The guilt of saying no to his face.", score: { C: 2, T: -1 },
+            title: "Too much empathy",
+            body: "You walk past because you'd feel it if you stopped. That is managing emotion, not coldness." },
+          { key: "c", text: "Nothing. Honestly, I don't think about it.", score: { C: -1, P: 1 },
             title: "Habituation",
-            body: "When something is seen every day, the mind stops flagging it. This is ordinary habituation and it happens to most people who live in cities. It does not make you unkind. It does mean your moral attention is being spent elsewhere, and that some of your values run on autopilot until something breaks the routine." }
+            body: "Need you see every day stops registering. Not unkind, but some of your values run on autopilot." }
+        ] },
+      follow: { prompt: "Later that night you pass the same spot. He is asleep on the pavement in the cold. Does anything change?",
+        options: [
+          { key: "D1", text: "Yes. I'd stop and leave him something.", score: { C: 2 }, held: false,
+            title: "The need became real",
+            body: "Seeing him vulnerable broke through. Your compassion needs a moment you can't step around." },
+          { key: "D2", text: "I'd feel bad, but I'd still keep walking.", score: { C: 1, T: -1, P: 1 }, held: true,
+            title: "Feeling without acting",
+            body: "You feel it, but it doesn't become action. Repeat that often and you learn that feelings needn't change anything." },
+          { key: "D3", text: "No. It's the same situation as before.", score: { P: 1 }, held: true,
+            title: "Consistent detachment",
+            body: "The scene doesn't move you. Part realism, part protective numbness." }
         ] } }
   ],
   research: [
-    { claim: "Donors gave about 40% more when they could give a smoker nicotine patches instead of cash, and over 90% of donations were in kind when both were allowed.",
+    { claim: "Donors gave about 40% more when they could give a smoker nicotine patches instead of cash; over 90% of donations were in kind when both were allowed.",
       cite: "Jacobsson, Johannesson & Borgquist (2007). Is altruism paternalistic? Economic Journal, 117, 761-781.", url: "https://doi.org/10.1111/j.1468-0297.2007.02049.x" },
-    { claim: "Across 19 studies in 10 countries, cash transfers to poor households did not raise spending on alcohol or tobacco, and often lowered it. These were household programmes, not street giving, but they test the same intuition.",
+    { claim: "Across 19 studies in 10 countries, cash transfers to poor households did not raise spending on alcohol or tobacco, and often lowered it.",
       cite: "Evans & Popova (2017). Cash transfers and temptation goods. Economic Development and Cultural Change, 65(2).", url: "https://doi.org/10.1086/689575" },
-    { claim: "People judge who deserves help by whether need looks caused by laziness or bad luck. Anger and compassion carry the effect, independent of political ideology.",
+    { claim: "People judge who deserves help by whether need looks caused by laziness or bad luck, independent of political ideology.",
       cite: "Petersen, Sznycer, Cosmides & Tooby (2012). Who deserves help? Political Psychology, 33(3).", url: "https://cep.ucsb.edu/wp-content/uploads/2023/05/Petersen_etal_2012_WhoDeservesHelp.pdf" },
-    { claim: "When a charity collector asked shoppers directly, 26% to 33% avoided the door where the collector stood. People avoid empathy they expect to be costly.",
+    { claim: "When a charity collector asked shoppers directly, 26% to 33% avoided the door where the collector stood.",
       cite: "Andreoni, Rao & Trachtman (2017). Avoiding the ask. Journal of Political Economy, 125(3), 625-653.", url: "https://econweb.ucsd.edu/~jandreon/Publications/JPE2017AvoidingTheAsk.pdf" },
-    { claim: "Harm caused by direct action and physical contact is judged more harshly than equivalent harm that is merely allowed or enabled.",
+    { claim: "Low-empathy helpers mostly helped only when escape was hard; high-empathy helpers helped either way.",
+      cite: "Batson, Duncan, Ackerman, Buckley & Birch (1981). Is empathic emotion a source of altruistic motivation? Journal of Personality and Social Psychology, 40(2).", url: "https://doi.org/10.1037/0022-3514.40.2.290" },
+    { claim: "Harm caused by direct action and contact is judged more harshly than equivalent harm that is only allowed or enabled.",
       cite: "Cushman, Young & Hauser (2006). The role of conscious reasoning and intuition in moral judgment. Psychological Science, 17(12).", url: "https://doi.org/10.1111/j.1467-9280.2006.01834.x" },
-    { claim: "Empathy is partly motivated: people approach or avoid it depending on its expected emotional and material costs.",
+    { claim: "People approach or avoid empathy depending on what they expect it to cost them.",
       cite: "Zaki (2014). Empathy: A motivated account. Psychological Bulletin, 140(6).", url: "https://doi.org/10.1037/a0037679" }
   ]
 },
@@ -355,59 +413,95 @@ const PLATES = [
   theme: "Honesty when nobody is watching",
   scenario: "After dinner at a busy restaurant you glance at the receipt and notice they forgot to charge you for one dish, about 15% of the bill. You have already paid and you are at the door. Nobody will ever find out.",
   prompt: "What do you do?",
-  measures: "Whether your honesty is rule-based, empathy-based or audience-based, and what it takes to switch it on.",
+  measures: "Whether your honesty runs on rules, on empathy, or on having an audience.",
   options: [
     { key: "A", text: "Go back and tell them.", score: { I: 2 },
       title: "The internal auditor",
-      body: "Your honesty does not depend on an audience. In a study of about 17,000 'lost' wallets handed in across 355 cities in 40 countries, wallets containing money were returned more often than empty ones in 38 of the 40 countries, the opposite of what economists and the public predicted. The researchers traced it to self-image: keeping the money would have made people feel like thieves. Your answer suggests that a gap between who you are and who you believe you are bothers you more than the money pleases you.",
-      daily: "You probably return extra change, correct people who give you too much credit, and feel uneasy about owning anything you did not fairly earn.",
-      case: "Integrity. It is their money, and who I am should not depend on being watched.",
+      body: "Your honesty doesn't need an audience. In a 40-country study, wallets with money were returned more often than empty ones, because keeping them felt like stealing.",
+      daily: "You return extra change and dislike owning anything you didn't earn.",
+      case: "Integrity. Who I am shouldn't depend on being watched.",
+      why: { prompt: "What's the real reason you'd go back?",
+        options: [
+          { key: "a", text: "It's their money. Keeping it would be stealing.", score: { I: 2 },
+            title: "A clear rule",
+            body: "Not yours is not yours. This honesty needs no witness and no victim." },
+          { key: "b", text: "Someone, probably the waiter, might get in trouble.", score: { C: 2 },
+            title: "Protecting a person",
+            body: "Your honesty is about who would pay for the mistake. The twist tests whether it survives when nobody does." },
+          { key: "c", text: "I'd feel guilty every time I thought about it.", score: { I: 1, P: 1 },
+            title: "Keeping your self-image clean",
+            body: "You go back so you can keep seeing yourself as honest. It works, and it's partly a gift to yourself." }
+        ] },
       follow: { prompt: "Now suppose it is a huge international chain and the error came from their billing software. No employee will be blamed or lose wages. Do you still go back?",
         options: [
           { key: "A1", text: "Yes. It isn't about who loses, it's about what's right.", score: { I: 2 }, held: true,
             title: "Principle, not pity",
-            body: "Your honesty is rule-based. It does not need a sympathetic victim to switch on. People with this pattern tend to be highly trusted in organisations because their behaviour does not change with the size or the face of the other party. The flip side is that you may find other people's situational ethics frustrating, and you may judge small lapses more harshly than they deserve." },
+            body: "Your honesty doesn't need a sympathetic victim. You're trusted for it, and you may judge other people's small lapses too harshly." },
           { key: "A2", text: "Probably not. I went back for the waiter, not the company.", score: { C: 2, I: -1 }, held: false,
             title: "Honesty with a face",
-            body: "Your honesty is powered by empathy more than by rules. When a real person could be hurt, you act. When the loser is an abstract corporation, the pull fades. This is the identifiable victim effect: people respond far more strongly to a specific person than to a statistical or faceless one. It makes you kind in personal dealings. It can also make you lenient about wrongs whose victims you never see, such as taxes, insurance claims or company property." }
+            body: "Empathy, not rules, drives your honesty. Expect to go easy where the victim is faceless: taxes, insurers, employers." }
         ] } },
     { key: "B", text: "Keep walking. Their mistake, not mine.", score: { P: 2, I: -1 },
       title: "The pragmatist's ledger",
-      body: "You draw a clear line between doing something wrong and benefiting from someone else's error. You did not lie and you did not take anything; the restaurant made the mistake. Most people's ethics contain this distinction between acts and omissions, and many quietly share your answer while saying otherwise. A meta-study of 90 experiments found that people given a private chance to lie for money gave up about three-quarters of what they could have taken. People bend a little, in ways they can explain to themselves, and rarely take everything.",
-      daily: "You are realistic about how the world works and unwilling to pay for other people's carelessness. You may judge others more on competence than on generosity.",
-      case: "Fair play. I didn't cause the error, and a business absorbs mistakes like this every day.",
+      body: "You separate doing wrong from benefiting from someone else's error. Most people quietly agree: across 90 experiments, people took only about a quarter of what they could have gained by lying.",
+      daily: "You're realistic and won't pay for other people's carelessness.",
+      case: "Fair play. I didn't cause the error.",
+      why: { prompt: "Why keep it?",
+        options: [
+          { key: "a", text: "Checking their bill isn't my job.", score: { P: 2 },
+            title: "Not my job",
+            body: "They handle their billing, you handle yours. A clean line that happens to fall in your favour." },
+          { key: "b", text: "Restaurants overcharge all the time. It evens out.", score: { P: 1, I: -1 },
+            title: "Rough justice",
+            body: "Businesses overcharge, so this evens the score. People bend rules most easily when the other side seems to deserve it." },
+          { key: "c", text: "Going back would be awkward and slow me down.", score: { P: 1, T: -1 },
+            title: "Friction wins",
+            body: "The hassle decided it, not the money. Your values are intact; your threshold for acting on them is high." }
+        ] },
       follow: { prompt: "What if you learned the missing amount would be deducted from the waiter's own wages?",
         options: [
           { key: "B1", text: "Then I'd go back.", score: { C: 2 }, held: false,
             title: "Harm-sensitive",
-            body: "Your working rule is roughly this: taking from a system is fine, taking from a person is not. That is a coherent position and most people share it. It also shows your first answer was never really about the money. It was about who would pay. Your conscience is wired to people more than to institutions." },
+            body: "Taking from a system is fine, taking from a person is not. Your conscience is wired to people, not institutions." },
           { key: "B2", text: "Still no. That's between them and their employer.", score: { P: 2, C: -1 }, held: true,
-            title: "Firm boundaries, sharp edges",
-            body: "You hold a strict line between your responsibility and everyone else's. You did not cause the error, so you will not carry its cost, even when you know who will. This protects you from guilt and from being exploited. It can also read as cold, and in teams or families it may leave others feeling they are on their own when things go wrong." }
+            title: "Sharp edges",
+            body: "You won't carry a cost you didn't cause, even knowing who will. It protects you and can read as cold." }
         ] } },
     { key: "C", text: "Leave a bigger tip to balance it out, without making a fuss.", score: { C: 1, P: 1 },
       title: "The moral bookkeeper",
-      body: "You felt the pull of honesty and found a way to answer it that kept everything smooth. The waiter benefits, you feel square, and nobody has an awkward conversation. Psychologists call this kind of move self-concept maintenance: finding an action that lets us keep seeing ourselves as good people without paying the full cost. It is creative and kind. It is also slightly self-serving, because the restaurant is still short and you picked the version with the least friction for you.",
-      daily: "You are likely a natural diplomat who finds third options, and you may skip direct conversations when a quieter fix is available.",
-      case: "Balance. I'll make it right in a way that helps the person who actually served me.",
+      body: "You found a way to feel square without an awkward conversation. Kind and creative, and a little self-serving: the restaurant is still short.",
+      daily: "You're a natural diplomat who often skips the direct conversation.",
+      case: "Balance. Make it right for the person who actually served me.",
+      why: { prompt: "Why a tip instead of telling them?",
+        options: [
+          { key: "a", text: "The waiter deserves it more than the company does.", score: { C: 2 },
+            title: "Redistribution",
+            body: "You decided the waiter deserves it more than the company. Warm, and quietly rule-bending." },
+          { key: "b", text: "I don't want to embarrass anyone by making a fuss.", score: { C: 1, P: 1 },
+            title: "Sparing feelings",
+            body: "You avoid embarrassing anyone. Sometimes that's kindness; sometimes it's dodging a direct conversation." },
+          { key: "c", text: "It's a fair compromise. Everyone comes out fine.", score: { P: 1 },
+            title: "The deal-maker",
+            body: "A tidy compromise. It assumes you get to decide what's fair to the restaurant." }
+        ] },
       follow: { prompt: "The waiter is delighted with the big tip. The restaurant is still short by the full amount. Does that sit right with you?",
         options: [
           { key: "C1", text: "Yes. Someone deserving got something, and it evens out.", score: { C: 1, P: 1 }, held: true,
             title: "Outcome over procedure",
-            body: "You judge fairness by where the money ends up rather than by whether the rules were followed. It shows a strong instinct for helping the person in front of you. It also shows a skill most people have and few notice: telling yourself a story that turns a small gain into a good deed." },
+            body: "You judge fairness by where the money lands. You're good at turning a small gain into a good deed." },
           { key: "C2", text: "Not entirely. Maybe I should have just said something.", score: { I: 1, T: 1 }, held: false,
             title: "A conscience that keeps working",
-            body: "You noticed the gap in your own reasoning, which many people never do. You likely take the easy path in the moment and revisit it later. Over time people like you often become more direct, because the after-feeling of a dodge is worse than the brief discomfort of honesty." }
+            body: "You caught the gap in your own reasoning. You take the easy path, then come back to it." }
         ] } }
   ],
   research: [
-    { claim: "About 17,000 wallets were handed in across 355 cities in 40 countries. Wallets with money were returned more often than empty ones in 38 of 40 countries, driven by aversion to seeing oneself as a thief.",
+    { claim: "About 17,000 wallets were handed in across 355 cities in 40 countries. Wallets with money were returned more often than empty ones in 38 of the 40 countries.",
       cite: "Cohn, Marechal, Tannenbaum & Zund (2019). Civic honesty around the globe. Science, 365(6448), 70-73.", url: "https://doi.org/10.1126/science.aau8712" },
-    { claim: "Across 90 experiments, people with a private chance to lie for money gave up about three-quarters of the potential gain. Most people care about being honest, or at least about looking honest to themselves.",
+    { claim: "Across 90 experiments, people with a private chance to lie for money gave up about three-quarters of the possible gain.",
       cite: "Abeler, Nosenzo & Raymond (2019). Preferences for truth-telling. Econometrica, 87(4), 1115-1153.", url: "https://doi.org/10.3982/ECTA14673" },
-    { claim: "A meta-analysis of 565 experiments (44,050 choices) found dishonesty depends on reward size, who is harmed, and personal factors such as age.",
+    { claim: "A meta-analysis of 565 experiments (44,050 choices) found dishonesty depends on reward size, who is harmed, and personal factors.",
       cite: "Gerlach, Teodorescu & Hertwig (2019). The truth about lies. Psychological Bulletin, 145(1), 1-44.", url: "https://doi.org/10.1037/bul0000174" },
-    { claim: "People cheat by amounts small enough to keep a positive self-image. Some later studies in this line of work did not replicate, so treat specific effects with care; the broad pattern is supported by the meta-analyses above.",
+    { claim: "People cheat by amounts small enough to keep a positive self-image. Some later studies in this line did not replicate.",
       cite: "Mazar, Amir & Ariely (2008). The dishonesty of honest people. Journal of Marketing Research, 45(6).", url: "https://doi.org/10.1509/jmkr.45.6.633" },
     { claim: "People give far more to a single identifiable victim than to statistical or faceless ones.",
       cite: "Small, Loewenstein & Slovic (2007). Sympathy and callousness. Organizational Behavior and Human Decision Processes, 102(2).", url: "https://doi.org/10.1016/j.obhdp.2006.01.005" }
@@ -419,58 +513,98 @@ const PLATES = [
   theme: "Loyalty against justice",
   scenario: "You are a passenger in a car driven by a close friend. They are doing 60 km/h in a 30 zone when they hit a pedestrian. There are no other witnesses. Your friend's lawyer tells you that if you testify the speed was 30, your friend will avoid serious consequences.",
   prompt: "What do you say under oath?",
-  measures: "How you rank loyalty to your own people against fairness to strangers, and whether higher stakes pull those two further apart.",
+  measures: "How you rank loyalty to your own people against fairness to strangers.",
   options: [
     { key: "A", text: "The truth. They chose to speed.", score: { I: 2, A: 1, L: -1 },
       title: "The universalist",
-      body: "You believe rules should apply the same way to everyone, friends included. This dilemma comes from Fons Trompenaars' cross-cultural research with thousands of managers. In North America and Northern Europe nearly everyone gave your answer. In France and Japan about 70% did. In Venezuela about two-thirds said they would lie for the friend. Your answer puts you on the universalist side: duties to fairness and to strangers weigh as much as duties to the people you love.",
-      daily: "People can count on you to be fair and to not bend rules for insiders. Friends may sometimes feel you are not fully on their side.",
-      case: "Justice. The law has to mean the same thing for my friend as for a stranger, and someone got hurt.",
+      body: "Rules apply to everyone, friends included. In Trompenaars' studies nearly all North American and Northern European managers answered like you; about two-thirds of Venezuelans would lie.",
+      daily: "People count on you to be fair. Friends may feel you're not fully on their side.",
+      case: "Justice. The law means the same for my friend as for a stranger.",
+      why: { prompt: "What makes you tell the truth here?",
+        options: [
+          { key: "a", text: "Lying under oath is wrong. Full stop.", score: { I: 2 },
+            title: "The rule itself",
+            body: "An oath is an oath. You don't weigh who benefits." },
+          { key: "b", text: "The person who was hit deserves justice.", score: { C: 2 },
+            title: "The victim comes first",
+            body: "The injured stranger's claim outweighs your friend's. Compassion, not rules, drives your honesty here." },
+          { key: "c", text: "I won't risk getting into legal trouble myself.", score: { P: 2 },
+            title: "Self-protection",
+            body: "You won't risk perjury for anyone. Realistic, but it suggests you might bend if lying were safe." }
+        ] },
       follow: { prompt: "Now the pedestrian has died. Your friend could go to prison for years, and your testimony decides it. Still the truth?",
         options: [
           { key: "A1", text: "Yes. If anything, more so now.", score: { I: 2 }, held: true,
             title: "Stakes strengthen you",
-            body: "Trompenaars and Hampden-Turner reported that making the injury more serious pushed universalists further toward the truth, while particularists felt their friend needed them more. You reacted like a committed universalist. Your principles hold in bad weather. People with this pattern make reliable witnesses, judges and leaders, and they sometimes pay for it in friendships." },
+            body: "Higher stakes made you firmer. A reliable witness, sometimes at a cost to friendships." },
           { key: "A2", text: "I'm not sure any more. I don't know if I could send them to prison.", score: { L: 2 }, held: false,
-            title: "A principle with a breaking point",
-            body: "Your commitment to the truth is real, and love sets its limit. When the consequence for your friend became severe, the pull of the relationship outgrew the rule. Fairness is high on your list and loyalty is close behind it. This is an honest answer, and most people would feel exactly this conflict." }
+            title: "A breaking point",
+            body: "Your principle is real, and love sets its limit. Most people would feel exactly this conflict." }
         ] } },
     { key: "B", text: "Say 30. They're my friend.", score: { L: 2, I: -2 },
       title: "The particularist",
-      body: "For you, relationships create obligations that rules cannot override. A friendship is not a contract that ends when it becomes inconvenient. In much of the world this is the mainstream view, and it underpins strong families, deep trust networks and a willingness to sacrifice for others. Moral psychologists treat loyalty as one of the core foundations of morality, found across cultures. When the abstract and the personal collide, you choose the personal.",
-      daily: "You are the person people call at 2 a.m. The price of that loyalty is that you may excuse behaviour in people you love that you would condemn in anyone else.",
-      case: "Loyalty. Friends protect each other, and a lie cannot undo the accident anyway.",
+      body: "Relationships create duties that rules can't override. In much of the world this is the mainstream view, and loyalty is a moral foundation found across cultures.",
+      daily: "You're the 2 a.m. call. You may excuse in friends what you'd condemn in strangers.",
+      case: "Loyalty. Friends protect each other.",
+      why: { prompt: "Why would you lie for them?",
+        options: [
+          { key: "a", text: "Friends protect each other. That's what loyalty means.", score: { L: 2 },
+            title: "The loyalty code",
+            body: "Testifying against a friend would be the real betrayal. Loyalty is a principle for you, not just a feeling." },
+          { key: "b", text: "It was an accident. Prison would ruin their life.", score: { C: 2, L: 1 },
+            title: "Mercy over punishment",
+            body: "You see a friend who made a mistake. The pedestrian is harder to see from where you sit." },
+          { key: "c", text: "They'd do the same for me.", score: { L: 1, P: 1 },
+            title: "Reciprocity",
+            body: "Mutual protection. It also makes your loyalty depend on theirs." }
+        ] },
       follow: { prompt: "Now the pedestrian has died. They were a young parent. Do you still testify to 30?",
         options: [
           { key: "B1", text: "Yes. My friend needs me more than ever now.", score: { L: 2, I: -1 }, held: true,
             title: "Loyal to the end",
-            body: "This is the particularist pattern in its purest form: the greater the danger to your friend, the stronger your duty to them. Your loyalty grows with the stakes. It makes you an extraordinary ally. It also means your moral circle has a hard edge, and people outside it, even a grieving family, count for less when they conflict with the people inside it." },
+            body: "The worse it gets for your friend, the stronger your duty. Your moral circle has a hard edge." },
           { key: "B2", text: "No. That changes everything.", score: { C: 1, I: 1 }, held: false,
             title: "Loyalty with a ceiling",
-            body: "You will bend rules for a friend when the harm is limited, but serious harm to an innocent stranger breaks the deal. Your loyalty is strong and your conscience bounds it. Research on whistleblowing finds the same trade-off: people weigh fairness against loyalty, and the balance tips once the cost to others grows large enough." }
+            body: "You'll bend for a friend until an innocent stranger pays heavily. Strong loyalty, bounded by conscience." }
         ] } },
     { key: "C", text: "Say I didn't notice the speed.", score: { P: 1, L: 1, T: -1 },
       title: "The escape hatch",
-      body: "You looked for a third path that avoids betraying your friend and avoids an outright lie. It is a strategic and very human response to a real conflict of values. Look at what it does, though: it still protects your friend, and it does so by claiming ignorance instead of making a choice. People who reach for the escape hatch are usually skilled at navigating conflict, and sometimes use that skill to avoid taking a stand.",
-      daily: "In arguments you may often say you are staying out of it. That keeps the peace, and it is also a choice with consequences.",
-      case: "Self-protection. I won't lie outright, and I won't be the one who destroys my friend either.",
+      body: "You found a path that avoids both betrayal and an outright lie. It still protects your friend, by claiming ignorance instead of choosing.",
+      daily: "In arguments you 'stay out of it'. That's a choice too.",
+      case: "Self-protection. I won't lie, and I won't be the one who destroys my friend.",
+      why: { prompt: "Why that answer?",
+        options: [
+          { key: "a", text: "I don't want to lie, but I can't betray them either.", score: { I: 1, L: 1 },
+            title: "Caught between two codes",
+            body: "Both pulls are real for you, and the conflict genuinely hurts." },
+          { key: "b", text: "I'd rather not be the one who decides their fate.", score: { P: 1, T: -1 },
+            title: "Avoiding the verdict",
+            body: "Not acting feels less blameworthy than acting; psychologists call it omission bias. Staying vague is still a choice." },
+          { key: "c", text: "Honestly, I might not have been watching the speedometer.", score: { L: 1, T: -1 },
+            title: "Convenient doubt",
+            body: "The doubt may be real. It is also very convenient for your friend." }
+        ] },
       follow: { prompt: "The lawyer says vagueness won't hold up in court. You must state a number. 30 or 60?",
         options: [
           { key: "C1", text: "60. The truth.", score: { I: 1 }, held: null,
             title: "Truth under pressure",
-            body: "When the escape route closed, you chose honesty. Your first instinct was to avoid the confrontation, and your bottom line is still the truth. People with this pattern often delay hard choices, but rarely make the wrong one once they are cornered." },
+            body: "Cornered, you chose honesty. You delay hard choices but rarely get them wrong." },
           { key: "C2", text: "30. I'd protect them.", score: { L: 1, P: 1 }, held: null,
             title: "Loyalty under pressure",
-            body: "When forced to choose, you chose your friend. The vagueness in your first answer was a way of protecting them without saying so. Knowing this about yourself is useful: in a real crisis, your loyalty will probably beat the rules." }
+            body: "Forced to choose, you chose your friend. In a real crisis, loyalty will likely beat the rules." }
         ] } }
   ],
   research: [
-    { claim: "The original car-and-pedestrian dilemma. North American and Northern European managers almost all refused to lie; about 70% of French and Japanese managers did; in Venezuela about two-thirds would lie for the friend. Raising the severity of the injury pushed the two groups further apart.",
+    { claim: "The original car-and-pedestrian dilemma. North American and Northern European managers almost all refused to lie; about 70% of French and Japanese managers did too; about two-thirds of Venezuelans would lie for the friend.",
       cite: "Trompenaars & Hampden-Turner (1997). Riding the Waves of Culture, 2nd ed. Nicholas Brealey.", url: "https://en.wikipedia.org/wiki/Trompenaars%27s_model_of_national_culture_differences" },
-    { claim: "Whether people report wrongdoing depends on how they weigh fairness against loyalty, and shifting that balance changes behaviour.",
+    { claim: "Whether people report wrongdoing depends on how they weigh fairness against loyalty.",
       cite: "Waytz, Dungan & Young (2013). The whistleblower's dilemma and the fairness-loyalty tradeoff. Journal of Experimental Social Psychology, 49(6).", url: "https://moralitylab.bc.edu/wp-content/uploads/sites/192/2011/10/WaytzDunganYoungWB.pdf" },
-    { claim: "Loyalty is one of several moral foundations (with care, fairness, authority and sanctity) found across cultures; people differ in how much weight they give each.",
-      cite: "Graham, Nosek, Haidt, Iyer, Koleva & Ditto (2011). Mapping the moral domain. Journal of Personality and Social Psychology, 101(2).", url: "https://doi.org/10.1037/a0021847" }
+    { claim: "Loyalty is one of several moral foundations found across cultures; people differ in how much weight they give it.",
+      cite: "Graham, Nosek, Haidt, Iyer, Koleva & Ditto (2011). Mapping the moral domain. Journal of Personality and Social Psychology, 101(2).", url: "https://doi.org/10.1037/a0021847" },
+    { claim: "Harmful omissions are judged less harshly than equally harmful actions.",
+      cite: "Spranca, Minsk & Baron (1991). Omission and commission in judgment and choice. Journal of Experimental Social Psychology, 27(1).", url: "https://doi.org/10.1016/0022-1031(91)90011-T" },
+    { claim: "People accept evidence for the conclusion they want more easily than evidence against it.",
+      cite: "Kunda (1990). The case for motivated reasoning. Psychological Bulletin, 108(3).", url: "https://doi.org/10.1037/0033-2909.108.3.480" }
   ]
 },
 {
@@ -479,63 +613,99 @@ const PLATES = [
   theme: "Truth against kindness",
   scenario: "A close friend has spent a year building a business plan. Next week they will pitch it to investors and put their savings into it. They show it to you, glowing, and ask what you honestly think. You can see a serious flaw that will probably sink it.",
   prompt: "What do you tell them?",
-  measures: "Whether you treat the truth as a form of care or as a threat to it, and what you do when kindness and accuracy split.",
+  measures: "Whether you treat the truth as a form of care or as a threat to it.",
   options: [
     { key: "A", text: "The truth, plainly. It has a serious problem.", score: { T: 2, I: 1, A: 1 },
       title: "Truth as respect",
-      body: "You believe people deserve accurate information about their own lives, especially before a big decision. Holding back would feel to you like a quiet insult, a judgement that your friend can't handle reality. Humans have a well-documented reluctance to deliver bad news, which psychologists call the MUM effect, and you override it. People like you are valuable advisers because your praise actually means something.",
-      daily: "People bring you their drafts, plans and outfits when they want a real answer. Some avoid you for the same reason.",
-      case: "Honesty. They are about to bet their savings, and a real friend tells them now.",
+      body: "People deserve accurate information about their own lives. You override the common reluctance to deliver bad news, so your praise means something.",
+      daily: "People bring you their plans when they want a real answer.",
+      case: "Honesty. Their savings are at stake, so tell them now.",
+      why: { prompt: "Why say it straight?",
+        options: [
+          { key: "a", text: "Their savings are at stake. They need to know.", score: { C: 1, T: 1 },
+            title: "Protecting their future",
+            body: "A moment of hurt against their savings. Truth used as care." },
+          { key: "b", text: "I always tell people what I really think.", score: { T: 2 },
+            title: "Candour as identity",
+            body: "Honesty is who you are. Don't let it become a licence to skip care in how you say things." },
+          { key: "c", text: "If it fails, I don't want them blaming me for staying quiet.", score: { P: 1, T: 1 },
+            title: "Covering yourself",
+            body: "Better to speak now than be blamed later. The right action, partly for your own sake." }
+        ] },
       follow: { prompt: "Your friend is visibly hurt and goes quiet for a week. Looking back, was it worth it?",
         options: [
           { key: "A1", text: "Yes. Real friends tell the truth, even when it hurts.", score: { T: 1, I: 1 }, held: true,
             title: "Integrity-based trust",
-            body: "Researchers separate two kinds of trust: trust in someone's goodwill and trust in their honesty. You invest heavily in the second. Over a lifetime this tends to produce fewer but deeper friendships, with people who know your word can be taken at face value." },
+            body: "You'd rather be believed than liked. Fewer friendships, but deeper ones." },
           { key: "A2", text: "I'd still say it, but I'd change how I said it.", score: { C: 1, T: 1 }, held: true,
             title: "Honest and self-aware",
-            body: "You keep your commitment to the truth and take responsibility for how it lands. That combination is unusual. Many truth-tellers defend bluntness as a virtue in itself. You recognise that the way a truth is told decides whether it can be heard at all." }
+            body: "You keep the truth and own how it lands. That combination is rare." }
         ] } },
     { key: "B", text: "Praise the good parts and hint gently at the problem.", score: { C: 1, T: 1 },
       title: "The diplomat",
-      body: "You try to hold truth and kindness together. You will say the hard thing, wrapped in enough warmth that the friendship survives it. This is often the wisest answer, with one risk: people tend to hear what they want to hear, and a gentle hint can be missed completely. Whether your diplomacy carries the truth or avoids it depends on what you do when the hint does not land.",
-      daily: "You are likely good at feedback, team settings and family politics. Watch for moments where softness turns into vagueness.",
-      case: "Tact. The truth lands better when it doesn't arrive as an attack.",
+      body: "You try to keep truth and kindness together. The risk: people hear what they want, and a gentle hint is easy to miss.",
+      daily: "Good at feedback and family politics. Watch for softness turning into vagueness.",
+      case: "Tact. The truth lands better when it isn't an attack.",
+      why: { prompt: "Why soften it?",
+        options: [
+          { key: "a", text: "Criticism lands better with encouragement around it.", score: { C: 1, T: 1 },
+            title: "Strategic warmth",
+            body: "Warmth lowers defences so the point gets through. A real skill." },
+          { key: "b", text: "I don't want to crush their excitement.", score: { C: 2 },
+            title: "Protecting their joy",
+            body: "You'd rather dim the truth than their mood. Compassion is known to inflate feedback." },
+          { key: "c", text: "I might be wrong. It's not my place to be too sure.", score: { A: 1 },
+            title: "Humility",
+            body: "You hold your view loosely. Make sure it isn't cover for avoiding a hard conversation." }
+        ] },
       follow: { prompt: "Your friend beams: \"So you think it's good! Great, I'm going ahead.\" They missed every hint. Do you clarify?",
         options: [
           { key: "B1", text: "Yes. I'd spell out the problem now.", score: { T: 1, I: 1 }, held: false,
             title: "Diplomacy that serves the truth",
-            body: "Your gentleness was a method and never an escape. When it failed, you were willing to be blunt. This is close to what the management writer Kim Scott calls radical candour: caring personally while still challenging directly." },
+            body: "When the hint failed, you got direct. Caring and still challenging: radical candour." },
           { key: "B2", text: "No. I've said my piece. It's their call now.", score: { A: 1, P: 1, T: -1 }, held: true,
             title: "Diplomacy that serves the peace",
-            body: "You told yourself you were honest, and technically you were. But you know the message didn't land, and you chose not to push. This often comes from respect for other people's choices mixed with a strong dislike of conflict. It is worth noticing, because in high-stakes moments being technically honest and being understood are two different things." }
+            body: "Technically honest, but not understood. When the stakes are high, those are not the same thing." }
         ] } },
     { key: "C", text: "Encourage them. They need confidence right now, not criticism.", score: { C: 2, L: 1, T: -2, A: -1 },
       title: "The protector",
-      body: "You put your friend's feelings and confidence first, and research says you have company. In one set of studies, people who told kind lies were judged more moral than people who told the truth for selfish reasons, and kind lies increased trust in the liar's goodwill. Another study found that feeling compassion directly increases the urge to inflate feedback on weak work. Your answer comes from care. Its cost is that you decided on your friend's behalf that they could not handle the truth, right before a decision that depends on it.",
-      daily: "People feel safe and supported around you. They may not always know where they actually stand.",
-      case: "Kindness. Confidence matters, and maybe I'm wrong about the flaw.",
+      body: "You put their confidence first. Kind lies make people trust your goodwill, but you decided for them that they couldn't handle the truth, right before a big bet.",
+      daily: "People feel safe with you, but may not know where they stand.",
+      case: "Kindness. Confidence matters, and maybe I'm wrong.",
+      why: { prompt: "Why encourage instead of warn?",
+        options: [
+          { key: "a", text: "They're so excited. I can't be the one to ruin it.", score: { C: 2 },
+            title: "Unable to wound",
+            body: "Hurting someone you love feels impossible to you. That is exactly how kind lies happen." },
+          { key: "b", text: "Their drive matters more than the plan. They'll adapt.", score: { A: 1 },
+            title: "Belief in the person",
+            body: "You're betting on them, not the plan. Their savings are riding on that bet too." },
+          { key: "c", text: "It's not my place to tell them how to run their life.", score: { A: 2, T: -1 },
+            title: "Hands off",
+            body: "Their decision, their risk. But real freedom to choose needs accurate information." }
+        ] },
       follow: { prompt: "The pitch fails badly. Later your friend asks you: \"Did you see these problems back then?\" What do you say?",
         options: [
           { key: "C1", text: "I admit it and apologise.", score: { I: 1, T: 1 }, held: false,
             title: "Kind first, honest eventually",
-            body: "You chose kindness at the time and accountability afterwards. That protects your integrity, though it may sting your friend twice: once at the failure and again on learning you knew. People like you tend to grow into more direct honesty as they see how rarely the protective lie protects anyone." },
+            body: "You owned it afterwards. It may sting them twice: the failure, then learning you knew." },
           { key: "C2", text: "I say I didn't see it.", score: { L: 1, P: 1, I: -2 }, held: true,
             title: "The second lie",
-            body: "Kind lies tend to need company. Admitting the truth now would hurt your friend and expose your earlier choice, so the kind lie becomes a permanent one. It keeps the peace. It also means your friend may never learn what went wrong, and part of your friendship now rests on something they don't know." }
+            body: "Kind lies need company. Part of your friendship now rests on something they don't know." }
         ] } }
   ],
   research: [
-    { claim: "Prosocial lies increase benevolence-based trust (trust in someone's goodwill) while reducing integrity-based trust (trust in their honesty).",
+    { claim: "Prosocial lies increase trust in someone's goodwill while reducing trust in their honesty.",
       cite: "Levine & Schweitzer (2015). Prosocial lies: When deception breeds trust. Organizational Behavior and Human Decision Processes, 126, 88-106.", url: "https://doi.org/10.1016/j.obhdp.2014.10.007" },
-    { claim: "People who tell lies to help others are judged more ethical than people who tell the truth for selfish reasons.",
-      cite: "Levine & Schweitzer (2014). Are liars ethical? On the tension between benevolence and honesty. Journal of Experimental Social Psychology, 53, 107-117.", url: "https://doi.org/10.1016/j.jesp.2014.03.005" },
-    { claim: "Induced and trait compassion both increased inflated feedback on a poorly written essay, driven by a wish to prevent emotional harm.",
+    { claim: "People who lie to help others are judged more ethical than people who tell the truth for selfish reasons.",
+      cite: "Levine & Schweitzer (2014). Are liars ethical? Journal of Experimental Social Psychology, 53, 107-117.", url: "https://doi.org/10.1016/j.jesp.2014.03.005" },
+    { claim: "Feeling compassion increased inflated feedback on a poorly written essay.",
       cite: "Lupoli, Jampol & Oveis (2017). Lying because we care. Journal of Experimental Psychology: General, 146(7), 1026-1042.", url: "https://doi.org/10.1037/xge0000315" },
     { claim: "People are reluctant to pass on bad news, even when the recipient needs it (the MUM effect).",
       cite: "Rosen & Tesser (1970). On reluctance to communicate undesirable information. Sociometry, 33(3).", url: "https://doi.org/10.2307/2786156" },
-    { claim: "In diary studies, people reported lying in about one of every five social interactions, and a meaningful share of those lies were told for someone else's benefit.",
+    { claim: "In diary studies, people lied in about one in five social interactions, often for someone else's benefit.",
       cite: "DePaulo, Kashy, Kirkendol, Wyer & Epstein (1996). Lying in everyday life. Journal of Personality and Social Psychology, 70(5).", url: "https://doi.org/10.1037/0022-3514.70.5.979" },
-    { claim: "Feedback works best when the giver cares personally and challenges directly; care without challenge becomes 'ruinous empathy'.",
+    { claim: "Feedback works best when the giver cares personally and challenges directly.",
       cite: "Scott (2017). Radical Candor. St. Martin's Press.", url: "https://www.radicalcandor.com/our-approach/" }
   ]
 },
@@ -545,187 +715,289 @@ const PLATES = [
   theme: "Knowledge against peace of mind",
   scenario: "Someone hands you a sealed envelope. Inside is the exact date of your death, and it is guaranteed to be correct. You can open it now, or burn it unread. Either choice is permanent.",
   prompt: "What do you do with it?",
-  measures: "How you relate to uncertainty: whether knowledge feels like control or like a weight you would rather not carry.",
+  measures: "Whether knowledge feels like control to you, or like a weight.",
   options: [
     { key: "A", text: "Open it.", score: { T: 2 },
       title: "The realist",
-      body: "You would rather know than wonder. Uncertainty is the heavier burden for you, and knowledge, even of the worst kind, is something you can plan around. You are in a small minority. In two national surveys in Germany and Spain, 86% to 90% of adults said they would not want to know about negative future events like this, and only 1% consistently wanted to know what the future held. Your answer suggests a high need for control and confidence that you can carry hard facts.",
-      daily: "You likely read the full medical report, check the bank balance, and ask the question everyone else is avoiding.",
-      case: "Control. With the date known, I can plan my life and stop wasting it.",
+      body: "You'd rather know than wonder. You're in a small minority: in large surveys, 86% to 90% of adults said they would not want to know.",
+      daily: "You read the full report and ask the question everyone avoids.",
+      case: "Control. Knowing the date, I can plan my life.",
+      why: { prompt: "Why open it?",
+        options: [
+          { key: "a", text: "So I can plan the rest of my life properly.", score: { P: 1, T: 1 },
+            title: "The planner",
+            body: "Certainty is a tool for you: time to spend deliberately." },
+          { key: "b", text: "Not knowing would eat at me more than knowing.", score: { T: 1 },
+            title: "Uncertainty is the burden",
+            body: "An open question weighs on you more than a bad answer. Opening it ends the suspense." },
+          { key: "c", text: "Pure curiosity. I'd have to know.", score: { T: 2 },
+            title: "Curiosity first",
+            body: "You open every unknown. Great for learning; now and then it hands you something you can't put back." }
+        ] },
       follow: { prompt: "A second envelope holds the date of death of the person you love most. Do you open that one too?",
         options: [
           { key: "A1", text: "Yes. I'd want to know that too.", score: { T: 2 }, held: true,
             title: "Truth without exceptions",
-            body: "Your appetite for knowledge holds even when the knowledge concerns someone else's life and can only bring grief forward. You trust yourself to carry it, which is a rare and consistent position. Ask yourself whether you would tell them, because knowing alone may be the heavier half of that choice." },
+            body: "Even someone else's ending. Ask yourself whether you'd tell them; that may be the heavier half." },
           { key: "A2", text: "No. That one I couldn't carry.", score: { C: 1, P: 1 }, held: false,
             title: "Brave for yourself, gentle with love",
-            body: "You can face your own ending but not a countdown for someone you love. That shows where your fear actually lives: in loss more than in death. People who have lived through long terminal illnesses describe this as anticipatory grief, mourning someone in advance in a way that colours every remaining day with them." }
+            body: "You can face your own end but not theirs. Your fear lives in loss more than in death." }
         ] } },
     { key: "B", text: "Burn it.", score: { T: -1, P: 1 },
       title: "The present-keeper",
-      body: "You chose what most people choose. Psychologists call it deliberate ignorance: choosing not to know even when knowing is free. Gerd Gigerenzer's research links it to anticipatory regret and to risk aversion; people who prefer not to know also tend to buy more life and legal insurance. The logic is sound. Some knowledge cannot be used, only suffered, and you protect your ability to live in the present.",
-      daily: "You probably prefer to enjoy a good day without checking what might go wrong, and you dislike spoilers of every kind.",
+      body: "You chose what most people choose: deliberate ignorance. People who choose it tend to be risk-averse and to buy more insurance. It's about avoiding dread and regret.",
+      daily: "You hate spoilers and enjoy a good day without checking what might go wrong.",
       case: "Peace. Some knowledge can only be carried, never used.",
+      why: { prompt: "Why burn it?",
+        options: [
+          { key: "a", text: "I'd spend my life counting down instead of living.", score: { P: 1, T: -1 },
+            title: "Protecting the present",
+            body: "Every day would become one fewer. You avoid the dread." },
+          { key: "b", text: "Some things aren't meant to be known.", score: { I: 1, T: -1 },
+            title: "A sense of limits",
+            body: "Some knowledge feels wrong to you. An intuition, not a calculation." },
+          { key: "c", text: "Hope matters more to me than certainty.", score: { T: -1 },
+            title: "Choosing hope",
+            body: "Uncertain hope over certain bad news. Economists call this optimal expectations." }
+        ] },
       follow: { prompt: "What if the envelope also revealed the cause, and it was something you could prevent by changing your life now?",
         options: [
           { key: "B1", text: "Then I'd open it.", score: { P: 1, T: 1 }, held: false,
             title: "Information as a tool",
-            body: "Your avoidance is practical rather than fearful. You don't want knowledge that can only hurt, but you want knowledge you can act on. That matches how economists model information avoidance: people skip tests when the result can't change anything and seek them when it can. You are a pragmatist about truth." },
+            body: "You avoid knowledge that only hurts and want knowledge you can act on. A pragmatist about truth." },
           { key: "B2", text: "Still burn it. I'd rather live without that shadow.", score: { T: -2 }, held: true,
             title: "Peace above all",
-            body: "Even useful knowledge is not worth the shadow to you. That is a strong preference for emotional calm over control, and real life shows the same pattern: in one US study, fewer than 10% of people at risk of Huntington's disease took the predictive test before symptoms, even though the result mattered for planning their lives. Many people prefer to live with hope instead of certainty. The risk is that the habit spreads to things you could change, such as health symptoms, debts or relationship problems." }
+            body: "Even useful knowledge isn't worth the shadow. Watch that this doesn't spread to things you could fix: symptoms, debts, relationships." }
         ] } },
     { key: "C", text: "Keep it sealed in a drawer.", score: { P: 1 },
       title: "The option-keeper",
-      body: "You refused to close either door. You don't want the knowledge now, and you can't bear to lose the chance of it. Behavioural researchers see this everywhere: people pay real costs to keep options open that they will never use. The envelope in the drawer gives you a feeling of control without the weight of the answer. It may also become something you think about more often than you would have thought about either choice.",
-      daily: "You may keep apps, clothes, subscriptions and conversations open just in case, and find final decisions harder than most people do.",
-      case: "Flexibility. I'll decide when I'm ready, not when someone hands me an envelope.",
+      body: "You refused to close either door. People pay real costs to keep options they never use, and the drawer may weigh on you more than either choice would have.",
+      daily: "You keep subscriptions, clothes and conversations open just in case.",
+      case: "Flexibility. I'll decide when I'm ready.",
+      why: { prompt: "Why keep it instead of deciding?",
+        options: [
+          { key: "a", text: "I'm not ready now, but I might be one day.", score: { P: 1 },
+            title: "Not yet",
+            body: "You've handed the decision to your future self." },
+          { key: "b", text: "Destroying it feels like throwing away something important.", score: { P: 1 },
+            title: "Loss looms larger",
+            body: "Burning it is a permanent loss, and losses weigh more than equal gains." },
+          { key: "c", text: "Having the choice feels better than making it.", score: { P: 1, T: -1 },
+            title: "Control as comfort",
+            body: "Holding the option calms you, even if you never use it." }
+        ] },
       follow: { prompt: "Years pass. One bad night, you find yourself holding the envelope. Do you open it?",
         options: [
           { key: "C1", text: "Yes. Curiosity would win eventually.", score: { T: 1 }, held: false,
             title: "Curiosity wins",
-            body: "You kept the option open, and in the end the option used you. This is honest self-knowledge: you can delay a hard truth but not ignore it forever. People with this pattern often do better making hard decisions early, before stress makes them on their behalf." },
+            body: "You can delay a hard truth but not ignore it. Decide early, before stress decides for you." },
           { key: "C2", text: "No. But I'd be glad it's still there.", score: { P: 1 }, held: true,
             title: "Comfort in control",
-            body: "The envelope works for you as a symbol more than as information: because the knowledge is available, you don't need it. Many people manage anxiety this way, by holding the key to a door they never open. It is a stable strategy, as long as the drawer doesn't start calling to you." }
+            body: "The key to a door you never open. Stable, as long as the drawer stays quiet." }
         ] } }
   ],
   research: [
-    { claim: "In nationally representative surveys of over 2,000 adults in Germany and Spain, 86% to 90% did not want to know about upcoming negative events, 40% to 77% preferred not to know about positive ones, and only 1% consistently wanted to know. Not wanting to know went with risk aversion and buying more life and legal insurance.",
+    { claim: "In surveys of over 2,000 adults in Germany and Spain, 86% to 90% did not want to know about upcoming negative events and only 1% always wanted to know. Not wanting to know went with risk aversion and buying more insurance.",
       cite: "Gigerenzer & Garcia-Retamero (2017). Cassandra's regret: The psychology of not wanting to know. Psychological Review, 124(2), 179-196.", url: "https://doi.org/10.1037/rev0000055" },
-    { claim: "Deliberately choosing not to know is common and often rational: it can regulate emotion, avoid regret and preserve fairness.",
+    { claim: "Deliberately choosing not to know is common and often rational.",
       cite: "Hertwig & Engel (2016). Homo ignorans: Deliberately choosing not to know. Perspectives on Psychological Science, 11(3).", url: "https://doi.org/10.1177/1745691616635594" },
-    { claim: "Fewer than 10% of people at risk of Huntington's disease were tested before symptoms, consistent with people preferring hopeful beliefs to certain bad news.",
+    { claim: "Fewer than 10% of people at risk of Huntington's disease were tested before symptoms.",
       cite: "Oster, Shoulson & Dorsey (2013). Optimal expectations and limited medical testing. American Economic Review, 103(2), 804-830.", url: "https://doi.org/10.1257/aer.103.2.804" },
-    { claim: "People avoid information that is free and useful when they expect it to hurt, especially when they feel unable to act on it.",
+    { claim: "People avoid free, useful information when they expect it to hurt, especially when they can't act on it.",
       cite: "Golman, Hagmann & Loewenstein (2017). Information avoidance. Journal of Economic Literature, 55(1), 96-135.", url: "https://doi.org/10.1257/jel.20151245" },
     { claim: "People pay to keep options from disappearing, even options they rarely use.",
-      cite: "Shin & Ariely (2004). Keeping doors open. Management Science, 50(5), 575-586.", url: "https://doi.org/10.1287/mnsc.1030.0148" }
+      cite: "Shin & Ariely (2004). Keeping doors open. Management Science, 50(5), 575-586.", url: "https://doi.org/10.1287/mnsc.1030.0148" },
+    { claim: "Losses weigh more heavily than equal gains.",
+      cite: "Kahneman & Tversky (1979). Prospect theory. Econometrica, 47(2), 263-291.", url: "https://doi.org/10.2307/1914185" }
   ]
 }
 ];
 
+/* ---------- closing round: the mirror ---------- */
+const MIRROR = [
+  { prompt: "Last two questions, about you. Compared with most people, how would you really act in these five situations?",
+    options: [
+      { key: "a", text: "Better than most people.",
+        title: "Holier than thou",
+        body: "Most people say this, so many of them are wrong. We judge ourselves by intentions and others by actions." },
+      { key: "b", text: "About the same as most.",
+        title: "Calibrated",
+        body: "A less common answer, and usually a more accurate one. Most people overrate their own goodness." },
+      { key: "c", text: "Worse than most people.",
+        title: "Hard on yourself",
+        body: "Unusual, since most people err the other way. High standards, or more self-criticism than the evidence supports." }
+    ] },
+  { prompt: "Be honest: did you answer as you would actually act, or as you would like to act?",
+    options: [
+      { key: "a", text: "As I'd actually act.",
+        title: "Confident self-knowledge",
+        body: "In experiments people act less generously when the choice is real than when it's hypothetical. Your reading is likely right in direction and a little generous in degree." },
+      { key: "b", text: "A bit better than I'd really act.",
+        title: "Honest about the gap",
+        body: "You know your ideals from your behaviour under pressure. Read your profile as your aims." },
+      { key: "c", text: "I genuinely don't know.",
+        title: "An open question",
+        body: "Behaviour depends heavily on the situation and who's watching, so this is closer to the science than certainty is." }
+    ] }
+];
+const MIRROR_RESEARCH = [
+  { claim: "Students overestimated how generously they would act, such as buying a charity daffodil, while their predictions about other people were accurate.",
+    cite: "Epley & Dunning (2000). Feeling 'holier than thou'. Journal of Personality and Social Psychology, 79(6), 861-875.", url: "https://doi.org/10.1037/0022-3514.79.6.861" },
+  { claim: "People were more willing to harm someone else for money when the choice was real than when it was hypothetical.",
+    cite: "FeldmanHall, Mobbs, Evans, Hiscox, Navrady & Dalgleish (2012). What we say and what we do. Cognition, 123(3), 434-441.", url: "https://doi.org/10.1016/j.cognition.2012.02.001" }
+];
+function mirrorSummary(m1, m2) {
+  if (m1 === "a" && m2 === "a") return "Better than most, and answering as you'd really act: the combination where self-image and behaviour drift apart most often. Treat the warmest parts of your reading as aims.";
+  if (m1 === "a" && m2 === "b") return "High standards, held with honesty about falling short of them. A healthy pairing.";
+  if (m1 === "a") return "You rate yourself above most but aren't sure how you'd act. The uncertainty is the more reliable signal.";
+  if (m1 === "b" && m2 === "a") return "A realistic self-view. Your reading is probably close to how you actually behave.";
+  if (m1 === "b") return "Modest and aware of the gap between ideals and actions. That usually goes with accurate self-knowledge.";
+  return "You rate yourself below most people. That probably says more about your standards than your behaviour.";
+}
+
 /* ---------- profile text ---------- */
 const PROFILES = {
-  C: { core: "Your choices are steered first by what other people feel. You notice suffering quickly and it moves you to act, often before you have worked out the principle behind the action. Researchers call this the care foundation of morality, and it is among the oldest: it grew out of the need to protect the vulnerable.",
-       rel: "You are warm and attentive, and people feel looked after around you. You may carry other people's emotions as if they were your own.",
-       work: "You make teams feel safe. You may delay decisions that would hurt someone, even necessary ones.",
-       stress: "Under pressure you may protect feelings at the expense of clarity, or quietly burn out from caring.",
-       mod: "That softens everything else: your rules and choices bend toward kindness when a real person is involved.",
-       low: "Compassion was your quietest signal. You lead with reason, rules or self-protection, which keeps you steady, but people in pain may experience you as distant. Before deciding, ask what the other person is feeling as well as what is right." },
-  A: { core: "You believe adults are entitled to run their own lives, including making choices you would never make. You resist the urge to manage people, even for their own good. This is the liberty strand of moral thinking, and in daily life it shows up as a low need to control others.",
-       rel: "You give people room and rarely lecture. Partners and friends feel trusted. Some may mistake your restraint for indifference.",
-       work: "You delegate well and dislike micromanagement in both directions.",
-       stress: "When things go wrong you may step back too far, letting people fail when a word from you would have helped.",
-       mod: "That keeps your other instincts from turning into control: you hold views firmly and let others reach their own.",
-       low: "Respect for autonomy came out low. Your care tends to arrive with a plan for how the other person should live. That often helps, and it can also feel like control. Try asking what someone wants before deciding what they need." },
-  I: { core: "Your behaviour is anchored by rules of honesty and fairness that you apply whether or not anyone is watching and whoever is involved. Your sense of who you are depends on living up to them. Research on moral identity finds that people for whom being moral is central to the self behave more consistently across situations.",
-       rel: "People trust your word completely. You may struggle with friends whose ethics bend with circumstance, and you can be hard on yourself.",
-       work: "You are the person organisations trust with money, audits and difficult calls. You may look rigid when rules and people collide.",
-       stress: "Under strain you may become rule-bound and judgemental, treating small lapses as large ones.",
-       mod: "That gives your other instincts a spine: when it matters, you fall back on fixed rules of honesty and fairness.",
-       low: "Principle was one of your lower signals. Your ethics are flexible and respond to context, which makes you adaptable and forgiving. The risk is that flexibility drifts toward convenience. Pick one or two lines you will never cross, and hold them even when nobody would know." },
-  L: { core: "Your moral world is organised around your people. Duties to friends and family feel stronger to you than duties to strangers or abstract rules. Loyalty is one of the moral foundations found across cultures, and it is what makes families and groups strong.",
-       rel: "You are the friend people call in a crisis. You may defend your own even when they are wrong.",
-       work: "You build fierce team loyalty. You may find it hard to report misconduct by colleagues you like.",
-       stress: "Under threat you may close ranks and hear criticism of your people as an attack on you.",
-       mod: "That gives your other instincts a direction: your people come first, and your principles serve them.",
-       low: "Loyalty was one of your lower signals. You hold friends and strangers to similar standards, which is fair and principled. Close friends may sometimes wish you were more unconditionally on their side." },
-  T: { core: "You would rather know than feel comfortable. Uncertainty and pretence bother you more than bad news does. You seek out information, say hard things, and expect others to handle reality the way you do.",
-       rel: "Your praise means something because people know it is real. Some may find you too direct, especially when they feel vulnerable.",
-       work: "You are valuable in reviews, audits, research and any role that needs someone to say the uncomfortable thing.",
-       stress: "Under pressure you may deliver truth without enough cushioning, or chase information that only feeds anxiety.",
-       mod: "That sharpens your other instincts: you prefer to act on what is real over what is comfortable.",
-       low: "Appetite for truth was one of your lower signals. You protect your peace and other people's feelings, often by not looking too closely. Some of that is wisdom, because not every fact deserves your attention. Watch that it doesn't extend to problems you could fix if you looked." },
-  P: { core: "You protect your resources, energy and peace of mind, and you are realistic about how the world works. You don't sacrifice yourself for symbolic gestures, and you are hard to manipulate.",
-       rel: "You set clear boundaries and people know where they stand with you. Some may experience you as guarded or transactional.",
-       work: "You are efficient, sceptical and good at protecting projects from waste. You may underweight goodwill and reputation.",
-       stress: "Under stress you may withdraw, avoid or calculate, protecting yourself first.",
-       mod: "That keeps your other instincts grounded: you care, and you don't let caring leave you exposed.",
-       low: "Self-protection came out low. You give your time, money and honesty freely, even at a cost to yourself. That is admirable, and it can leave you exposed to people who take more than they give. Protecting yourself keeps you able to help." }
+  C: { core: "Other people's feelings steer you first. You notice suffering fast and act on it, often before you've worked out the principle.",
+       rel: "Warm and attentive. You may carry other people's emotions as your own.",
+       work: "You make teams feel safe, but may delay decisions that hurt someone.",
+       stress: "You protect feelings at the cost of clarity, or burn out caring.",
+       mod: "Your rules bend toward kindness when a real person is involved.",
+       low: "You lead with reason and rules more than feeling. Steady, but people in pain may find you distant. Ask what they feel, not only what's right." },
+  A: { core: "You let adults run their own lives, even badly, and resist managing people for their own good.",
+       rel: "You give people room and rarely lecture. Some read that as indifference.",
+       work: "You delegate well and dislike being micromanaged.",
+       stress: "You may step back too far and let people fail.",
+       mod: "You hold your views firmly and let others reach their own.",
+       low: "Your care often comes with a plan for how others should live. Ask what people want before deciding what they need." },
+  I: { core: "Fixed rules of honesty and fairness anchor you, watched or not, whoever is involved.",
+       rel: "People trust your word. You can be hard on friends whose ethics bend, and on yourself.",
+       work: "Trusted with money and hard calls; rigid when rules and people collide.",
+       stress: "You turn rule-bound and treat small lapses as big ones.",
+       mod: "When it matters, you fall back on fixed rules.",
+       low: "Your ethics flex with context. Adaptable, but flexibility can drift into convenience. Pick a few lines you never cross." },
+  L: { core: "Your moral world is built around your people. Duties to them outrank duties to strangers and abstract rules.",
+       rel: "The friend people call in a crisis. You may defend your own even when they're wrong.",
+       work: "You build loyal teams, and find it hard to report colleagues you like.",
+       stress: "You close ranks and hear criticism of your people as an attack on you.",
+       mod: "Your people come first, and your principles serve them.",
+       low: "You hold friends and strangers to the same standard. Fair, though friends may want you more firmly on their side." },
+  T: { core: "You'd rather know than feel comfortable. Pretence bothers you more than bad news.",
+       rel: "Your praise counts because it's real. Some find you too direct.",
+       work: "Valuable wherever someone has to say the uncomfortable thing.",
+       stress: "You deliver truth without cushioning, or chase information that feeds anxiety.",
+       mod: "You act on what's real over what's comfortable.",
+       low: "You protect your peace, and other people's, by not looking too closely. Make sure that doesn't hide problems you could fix." },
+  P: { core: "You guard your money, energy and peace of mind. Realistic and hard to manipulate.",
+       rel: "Clear boundaries. Some find you guarded or transactional.",
+       work: "Efficient and sceptical; you may underrate goodwill.",
+       stress: "You withdraw or calculate, protecting yourself first.",
+       mod: "You care without leaving yourself exposed.",
+       low: "You give freely, even at your own cost, which leaves you open to people who take. Protecting yourself keeps you able to help." }
 };
 
 const PAIRS = {
   CA: { name: "The Open-Handed Helper", tag: "You care deeply, and you help without trying to run anyone's life." },
-  CI: { name: "The Moral Compass", tag: "Kind and principled. You want to do right by people and by the rules, and you feel it when those two pull apart." },
-  CL: { name: "The Devoted Protector", tag: "Your heart belongs to your people. You shield the ones you love, sometimes even from the truth." },
-  CT: { name: "The Honest Healer", tag: "You tell people hard truths because you care about them, and you work to make the truth survivable." },
-  CP: { name: "The Grounded Caregiver", tag: "You help generously within limits you set yourself, which keeps your kindness sustainable." },
-  AI: { name: "The Fair Referee", tag: "Firm rules for yourself and freedom for everyone else. Fairness and liberty are your two anchors." },
-  AL: { name: "The Free-Range Loyalist", tag: "You stand by your people without trying to control them: full support, no conditions on how they live." },
-  AT: { name: "The Clear-Eyed Individualist", tag: "You want reality straight, and you trust others to handle it the same way." },
-  AP: { name: "The Live-and-Let-Live Realist", tag: "You don't police others and you won't let them police you. Self-reliant and unsentimental." },
-  IL: { name: "The Torn Knight", tag: "Two codes run in you at once, honour to the rules and honour to your people, and you feel every collision between them." },
-  IT: { name: "The Truth Keeper", tag: "Honest when unwatched and candid when it hurts. Few people's word is trusted as much as yours." },
-  IP: { name: "The Principled Strategist", tag: "You play by the rules and you play to win. Clear ethics, clear boundaries, little sentiment." },
-  LT: { name: "The Candid Confidant", tag: "Fiercely loyal and still honest. You tell your people the truth precisely because they are yours." },
-  LP: { name: "The Clan Strategist", tag: "You look after yourself and your own. Outside that circle you are realistic and guarded." },
-  TP: { name: "The Clear-Eyed Pragmatist", tag: "You want the facts and you act on them in your own interest. Rational, sceptical and hard to fool." }
+  CI: { name: "The Moral Compass", tag: "Kind and principled, and you feel it when those two pull apart." },
+  CL: { name: "The Devoted Protector", tag: "You shield the people you love, sometimes even from the truth." },
+  CT: { name: "The Honest Healer", tag: "You tell hard truths because you care, and you make them survivable." },
+  CP: { name: "The Grounded Caregiver", tag: "Generous within limits you set, which keeps your kindness sustainable." },
+  AI: { name: "The Fair Referee", tag: "Firm rules for yourself, freedom for everyone else." },
+  AL: { name: "The Free-Range Loyalist", tag: "Full support for your people, no conditions on how they live." },
+  AT: { name: "The Clear-Eyed Individualist", tag: "You want reality straight and trust others to handle it too." },
+  AP: { name: "The Live-and-Let-Live Realist", tag: "You don't police others and won't be policed. Self-reliant and unsentimental." },
+  IL: { name: "The Torn Knight", tag: "Honour to the rules and honour to your people, and you feel every collision." },
+  IT: { name: "The Truth Keeper", tag: "Honest when unwatched, candid when it hurts." },
+  IP: { name: "The Principled Strategist", tag: "You play by the rules and play to win." },
+  LT: { name: "The Candid Confidant", tag: "Fiercely loyal and still honest, because they're your people." },
+  LP: { name: "The Clan Strategist", tag: "You look after yourself and your own. Outside that circle, you're guarded." },
+  TP: { name: "The Clear-Eyed Pragmatist", tag: "You want the facts and act on them in your own interest." }
 };
 
-/* ---------- cross-answer patterns (checked in order, first five that match are shown) ---------- */
+/* ---------- cross-answer patterns (checked in order; the first five that match are shown) ---------- */
+const count = (...xs) => xs.filter(Boolean).length;
 const PATTERNS = [
+  { when: a => a.q1 === "A" && a.q1w === "b" && a.q2 === "A" && a.q2w === "c",
+    title: "Feelings as your compass",
+    body: "Twice your reason was to escape a bad feeling. You're reliably decent when you feel something, less so when you don't." },
+  { when: a => count(a.q1 === "A" && a.q1w === "b", a.q2 === "B" && a.q2w === "c", a.q3 === "A" && a.q3w === "c", a.q3 === "B" && a.q3w === "c", a.q3 === "C" && a.q3w === "b", a.q4 === "A" && a.q4w === "c") >= 2,
+    title: "Your reasons point back to you",
+    body: "Several of your reasons were about protecting yourself from discomfort, hassle, risk or blame. Remove that motive and your behaviour may change." },
+  { when: a => a.q2 === "A" && a.q2w === "a" && a.q3 === "A" && a.q3w === "a",
+    title: "Honesty for its own sake",
+    body: "You'd return the money because it isn't yours and tell the truth because you swore to. Neither depended on who got hurt." },
+  { when: a => a.q1 === "C" && a.q1w === "b" && a.q3 === "A",
+    title: "Responsibility first",
+    body: "Twice you put the cost of a choice on the person who made it. Fair-minded, but it can hide the circumstances behind people's choices." },
+  { when: a => count(a.q1 === "A" && a.q1w === "c", a.q1 === "C" && a.q1w === "a", a.q2 === "A" && a.q2w === "b", a.q2 === "C" && a.q2w === "a", a.q3 === "A" && a.q3w === "b", a.q3 === "B" && a.q3w === "b", a.q4 === "A" && a.q4w === "a", a.q4 === "B" && a.q4w === "b", a.q4 === "C" && a.q4w === "a") >= 3,
+    title: "Compassion is your reason",
+    body: "Again and again your reason was someone's pain. Where there's no face to picture, like a company or a statistic, expect your motivation to drop." },
   { when: a => a.q2f === "B2" && a.q3f === "B1",
     title: "A tight inner circle",
-    body: "You'd let the waiter pay for the restaurant's error, and you'd keep lying for your friend even after a death. Your moral world has a hard edge: inside it are you and your people, and outside it obligations run thin. Your loyalty is real and strong. People outside the circle, and eventually some inside it, may feel the coldness of that edge." },
+    body: "You'd let the waiter pay for the restaurant's error, yet lie for your friend even after a death. Everything for those inside your circle; little for those outside." },
   { when: a => a.q1 === "A" && a.q4 === "C",
     title: "Freedom for strangers, protection for friends",
-    body: "With the stranger you defended his right to choose. With your friend you held back the information they needed to choose well. Real autonomy depends on accurate information, so the kind lie quietly overrides the freedom you defended on the street. Closeness seems to switch you from respecting choices to protecting feelings." },
+    body: "You defended a stranger's right to choose, but withheld the facts your friend needed to choose well. Closeness switches you from respecting choices to protecting feelings." },
+  { when: a => a.q1 === "A" && a.q1w === "a" && (a.q4w === "c" && (a.q4 === "B" || a.q4 === "C") || a.q4f === "B2"),
+    title: "Hands off, consistently",
+    body: "You left both the man and your friend to make their own call. Is stepping back always respect, or sometimes a way to avoid responsibility?" },
   { when: a => a.q2 === "A" && a.q3 === "B",
     title: "Strict with institutions, loyal to people",
-    body: "You would correct a restaurant's billing error, yet you would shade the truth under oath for a friend. Your honesty is strong, and loyalty outranks it when someone you love is at stake. You treat rules as there to protect relationships, so when a rule threatens a relationship, the relationship wins." },
+    body: "You'd correct a restaurant's bill but shade the truth under oath for a friend. When a rule threatens a relationship, the relationship wins." },
   { when: a => a.q2 === "B" && a.q3 === "A",
     title: "Ethics that scale with the stakes",
-    body: "You'd keep the restaurant's money, but you won't lie in court to protect a friend. Small, faceless gains feel acceptable to you; serious harm to a person does not. Your morality is proportionate. It switches on fully when real people and serious consequences are involved." },
+    body: "You'd keep the restaurant's money but won't lie in court. Small faceless gains are fine; serious harm to a person is not." },
   { when: a => (a.q1 === "A" || a.q1 === "B") && a.q2 === "B",
     title: "Generous by choice, relaxed about windfalls",
-    body: "You chose to give to a stranger, yet kept money that reached you by mistake. Many people's ethics work this way: giving feels like a voluntary virtue, while returning a windfall feels like an obligation with no reward. Research on moral licensing suggests that feeling good about past good deeds can make small lapses feel acceptable, though the effect measured in studies is modest." },
+    body: "You gave to a stranger but kept money that came by mistake. Giving feels like a virtue; returning a windfall feels like a chore." },
   { when: a => a.q1 === "C" && a.q2 === "B",
-    title: "A consistent self-reliance ethic",
-    body: "You declined to fund the man's choices and declined to pay for the restaurant's error. You are consistent: everyone, you included, owns their own outcomes. That makes you hard to exploit and easy to read. The question worth sitting with is whether the standard leaves room for people whose circumstances were never a choice." },
+    title: "A self-reliance ethic",
+    body: "You won't fund his choices or pay for the restaurant's error. Everyone owns their outcomes, which leaves little room for circumstances nobody chose." },
   { when: a => a.q3 === "A" && a.q4 === "A",
     title: "The consistent truth-teller",
-    body: "You chose the truth in court against your friend and the truth about your friend's plan. Honesty is not situational for you. People will trust your word deeply, and a few may find you hard to confide in when they want comfort more than accuracy." },
+    body: "The truth in court and the truth about the plan. Honesty isn't situational for you, though people wanting comfort may avoid you." },
   { when: a => a.q3 === "B" && a.q4 === "C",
     title: "Loyalty above accuracy",
-    body: "You protected your friend in court and protected your friend's feelings about their plan. For you, standing by people means shielding them. That makes you a warm and loyal ally, and it means the people closest to you may struggle to get an honest reading from you exactly when they need one." },
+    body: "You shielded your friend in court and from criticism. Your people may not get an honest reading from you when they need it most." },
   { when: a => a.q4 === "A" && a.q5 === "B",
     title: "Truth for others, peace for yourself",
-    body: "You told your friend a painful truth, yet you would burn the envelope about your own life. The asymmetry is common: we value other people's accurate information because it helps them act, and we avoid our own when it can only hurt. It may also mean you are braver with other people's feelings than with your own." },
+    body: "You told your friend a hard truth but would burn your own envelope. You may be braver with other people's feelings than with your own." },
   { when: a => a.q4 === "C" && a.q5 === "A",
     title: "Brave for yourself, protective of others",
-    body: "You want the hard truth about your own life, yet you shielded your friend from one. You trust yourself to handle reality more than you trust others to. That can be care. It can also be a quiet underestimate of the people around you." },
+    body: "You want hard truths about your own life but shielded your friend from one. You trust yourself with reality more than you trust others." },
+  { when: a => a.q4 === "C" && a.q5 === "B" && (a.q5w === "a" || a.q5w === "c"),
+    title: "Hope over hard facts",
+    body: "You encouraged your friend and would burn the envelope to keep hope alive. Comforting, but it leaves you unprepared for problems you could have seen." },
   { when: a => a.q1 === "D" && a.q5 === "B",
     title: "Not looking, as a way of coping",
-    body: "You walked past the man without deciding, and you would burn the envelope unread. You often manage hard emotions by not engaging with their source. In moderation this is healthy. As a default it can leave problems unattended until they grow. Research on information avoidance finds people look away most when they expect pain and feel unable to act." },
+    body: "You walked past without deciding and would burn the envelope unread. Fine in moderation; risky as a default." },
   { when: a => a.q2 === "C" && a.q3 === "C",
     title: "The third-option finder",
-    body: "Twice you found a middle path: a bigger tip instead of a confession, and 'I didn't notice' instead of a yes or a no. You are skilled at keeping everyone comfortable. In low-stakes moments that is a gift. In high-stakes ones the middle path can be a way of postponing a choice someone still has to make." },
+    body: "A bigger tip instead of a confession; 'I didn't notice' instead of yes or no. A gift when stakes are low, a way of postponing choices when they're high." },
   { when: a => a.q2f === "A2" && (a.q3f === "A2" || a.q3 === "B"),
     title: "People-shaped ethics",
-    body: "Your honesty switched on for the waiter but not for the corporation, and your commitment to the law gave way when your friend's future was at stake. Your morality is relational. Rules matter to you because they protect people, and when a rule turns against someone you love, it loses its authority." },
+    body: "Your honesty switched on for the waiter, not the corporation, and the law gave way to your friend. Rules matter to you only because they protect people." },
   { when: a => a.q1f === "A1" && a.q3 === "A",
     title: "Adults own their choices",
-    body: "You let the man spend his money on a bottle, and you would let your friend face the consequences of speeding. You consistently treat people as responsible adults: free to choose and accountable for what they choose." },
+    body: "You'd let the man buy his bottle and let your friend face the consequences. Free to choose, responsible for the result." },
   { when: a => a.q1f === "C1" && a.q3 === "B",
     title: "Earned compassion, automatic loyalty",
-    body: "You help strangers only when their need looks deserved, yet you would protect a friend who caused real harm. Strangers have to earn your compassion while friends receive loyalty by default. This is classic in-group bias and almost everyone has it. Seeing it clearly is the first step toward choosing when to override it." },
+    body: "Strangers have to earn your help; friends get loyalty by default. Classic in-group bias, and almost everyone has it." },
   { when: a => a.q5f === "B1" && (a.q4 === "A" || a.q4f === "B1"),
     title: "Information as a tool",
-    body: "You'd open the envelope only if it let you prevent something, and you made sure your friend understood the risk before betting their savings. You value information when it can change outcomes. You are a practical truth-seeker." },
+    body: "You want information when it can change an outcome, for you and for your friend. A practical truth-seeker." },
   { when: a => a.q1f === "B2" && (a.q4 === "A" || a.q4f === "B1"),
     title: "Help with a point of view",
-    body: "You were irritated when your sandwich was refused, and you told your friend exactly what was wrong with their plan. You hold clear views about what is good for people and you act on them. Your help is substantial, and it may land better when you ask what people want before deciding what they need." },
+    body: "Irritated by a refused sandwich, blunt about the plan. You know what's good for people; ask what they want first." },
   { when: a => a.q5 === "C" && a.q3 === "C",
     title: "Keeping every door open",
-    body: "You kept the envelope in a drawer and claimed not to have seen the speedometer. Both answers avoid closing a door. You value flexibility highly, and you may find decisive, irreversible commitments harder than most people do." }
+    body: "The envelope in a drawer and 'I didn't notice'. Irreversible commitments are harder for you than for most." }
 ];
 
 const FRAMEWORKS = [
   { cite: "Graham et al. (2011). Mapping the moral domain. Journal of Personality and Social Psychology, 101(2).", url: "https://doi.org/10.1037/a0021847", use: "The traits draw on Moral Foundations Theory: care, fairness, loyalty and liberty." },
-  { cite: "Bartels (2008). Principled moral sentiment and the flexibility of moral judgment and decision making. Cognition, 108(2).", url: "https://doi.org/10.1016/j.cognition.2008.03.001", use: "The 'how you hold a position' reading draws on work showing moral judgements shift with framing and vividness." },
-  { cite: "Aquino & Reed (2002). The self-importance of moral identity. Journal of Personality and Social Psychology, 83(6).", url: "https://doi.org/10.1037/0022-3514.83.6.1423", use: "Principle as part of identity predicts consistent behaviour across situations." },
-  { cite: "Merritt, Effron & Monin (2010). Moral self-licensing. Social and Personality Psychology Compass, 4(5).", url: "https://doi.org/10.1111/j.1751-9004.2010.00263.x", use: "Past good deeds can license later lapses; the measured effect is modest." }
+  { cite: "Bartels (2008). Principled moral sentiment and the flexibility of moral judgment and decision making. Cognition, 108(2).", url: "https://doi.org/10.1016/j.cognition.2008.03.001", use: "Moral judgements shift with framing and vividness; this underlies 'how you hold a position'." },
+  { cite: "Aquino & Reed (2002). The self-importance of moral identity. Journal of Personality and Social Psychology, 83(6).", url: "https://doi.org/10.1037/0022-3514.83.6.1423", use: "Principle held as identity predicts consistent behaviour." },
+  { cite: "Merritt, Effron & Monin (2010). Moral self-licensing. Social and Personality Psychology Compass, 4(5).", url: "https://doi.org/10.1111/j.1751-9004.2010.00263.x", use: "Past good deeds can license small lapses; the effect is modest." }
 ];
 
 /* ---------- helpers ---------- */
@@ -748,7 +1020,17 @@ function el(tag, attrs, kids) {
   return n;
 }
 function clear() { $app.textContent = ""; return $app; }
-function scrollTo(node) { node.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" }); }
+const wait = ms => new Promise(r => setTimeout(r, reduceMotion ? 0 : ms));
+
+// Scroll just enough to show `node`, without pushing `anchor` (the message the reader is on) off the top.
+function bringIntoView(node, anchor) {
+  const r = node.getBoundingClientRect();
+  const overflow = r.bottom - window.innerHeight + 24;
+  if (overflow <= 0) return;
+  const room = anchor ? anchor.getBoundingClientRect().top - 24 : overflow;
+  const by = Math.min(overflow, Math.max(0, room));
+  if (by > 0) window.scrollBy({ top: by, behavior: reduceMotion ? "auto" : "smooth" });
+}
 
 /* ---------- inkblots ---------- */
 function mulberry32(a) {
@@ -825,19 +1107,21 @@ function zero() { return Object.fromEntries(TRAITS.map(t => [t.k, 0])); }
 function add(s, sc) { for (const k in sc) s[k] += sc[k]; }
 function picks(a) {
   return PLATES.map((p, i) => {
-    const o = p.options.find(o => o.key === a["q" + (i + 1)]);
-    const f = o && o.follow.options.find(f => f.key === a["q" + (i + 1) + "f"]);
-    return { p, o, f };
+    const q = "q" + (i + 1);
+    const o = p.options.find(o => o.key === a[q]);
+    const w = o && o.why.options.find(w => w.key === a[q + "w"]);
+    const f = o && o.follow.options.find(f => f.key === a[q + "f"]);
+    return { p, o, w, f };
   });
 }
 const RANGE = (() => {
   const lo = zero(), hi = zero();
   PLATES.forEach(p => TRAITS.forEach(({ k }) => {
     let mn = Infinity, mx = -Infinity;
-    p.options.forEach(o => o.follow.options.forEach(f => {
-      const v = (o.score[k] || 0) + (f.score[k] || 0);
+    p.options.forEach(o => o.why.options.forEach(w => o.follow.options.forEach(f => {
+      const v = (o.score[k] || 0) + (w.score[k] || 0) + (f.score[k] || 0);
       mn = Math.min(mn, v); mx = Math.max(mx, v);
-    }));
+    })));
     lo[k] += mn; hi[k] += mx;
   }));
   return { lo, hi };
@@ -847,8 +1131,8 @@ function pairKey(x, y) { return [x, y].sort((m, n) => ORDER.indexOf(m) - ORDER.i
 function profileOf(a) {
   const raw = zero();
   let held = 0, counted = 0;
-  picks(a).forEach(({ o, f }) => {
-    add(raw, o.score); add(raw, f.score);
+  picks(a).forEach(({ o, w, f }) => {
+    add(raw, o.score); add(raw, w.score); add(raw, f.score);
     if (f.held !== null) { counted++; if (f.held) held++; }
   });
   const pct = {};
@@ -862,23 +1146,30 @@ function profileOf(a) {
   return { raw, pct, order, top, second, low, pair: PAIRS[pairKey(top, second)], patterns, held, counted };
 }
 
-/* ---------- answer codes and links ---------- */
-function codeOf(a) { return PLATES.map((_, i) => a["q" + (i + 1) + "f"]).join("."); }
-function answersFromCode(code) {
+/* ---------- answer codes and links ----------
+   Each plate is coded as choice letter + reason letter + twist digit, e.g. "Ab1". */
+function codeOf(a) {
+  return PLATES.map((_, i) => { const q = "q" + (i + 1); return a[q] + a[q + "w"] + a[q + "f"].slice(1); }).join(".");
+}
+function answersFromCode(code, mirror) {
   const parts = String(code || "").split(".");
   if (parts.length !== PLATES.length) return null;
   const a = {};
   for (let i = 0; i < PLATES.length; i++) {
-    const key = parts[i], main = key.charAt(0);
-    const o = PLATES[i].options.find(o => o.key === main);
-    if (!o || !o.follow.options.some(f => f.key === key)) return null;
-    a["q" + (i + 1)] = main; a["q" + (i + 1) + "f"] = key;
+    const s = parts[i];
+    if (!/^[A-D][a-c][1-3]$/.test(s)) return null;
+    const o = PLATES[i].options.find(o => o.key === s[0]);
+    if (!o || !o.why.options.some(w => w.key === s[1]) || !o.follow.options.some(f => f.key === s[0] + s[2])) return null;
+    const q = "q" + (i + 1);
+    a[q] = s[0]; a[q + "w"] = s[1]; a[q + "f"] = s[0] + s[2];
   }
+  if (/^[abc]{2}$/.test(mirror || "")) { a.m1 = mirror[0]; a.m2 = mirror[1]; }
   return a;
 }
-function resultLink(a, name) {
-  return location.href.split("#")[0] + "#r=" + codeOf(a) + "&n=" + encodeURIComponent(name);
+function hashOf(a, name) {
+  return "#r=" + codeOf(a) + (a.m1 ? "&m=" + a.m1 + a.m2 : "") + "&n=" + encodeURIComponent(name);
 }
+function resultLink(a, name) { return location.href.split("#")[0] + hashOf(a, name); }
 
 /* ---------- state ---------- */
 let state = { name: "", answers: {}, saved: false };
@@ -887,9 +1178,10 @@ function setProgress(current) {
   if (current < 0) { $progress.hidden = true; return; }
   $progress.hidden = false;
   $progress.textContent = "";
-  PLATES.forEach((p, i) => {
+  const stops = PLATES.map(p => ({ label: p.numeral, title: "Plate " + p.numeral })).concat([{ label: "M", title: "The mirror" }]);
+  stops.forEach((s, i) => {
     const cls = "dot" + (i < current ? " done" : i === current ? " now" : "");
-    $progress.append(el("span", { class: cls, title: "Plate " + p.numeral, "aria-current": i === current ? "step" : null }, p.numeral));
+    $progress.append(el("span", { class: cls, title: s.title, "aria-current": i === current ? "step" : null }, s.label));
   });
 }
 
@@ -899,9 +1191,15 @@ function renderIntro() {
   const m = clear();
   const s = el("section", { class: "intro" });
   s.append(blot(404, 2, "A symmetrical inkblot in black and red"));
-  s.append(el("p", { class: "eyebrow" }, "Five plates · about six minutes"));
+  s.append(el("p", { class: "eyebrow" }, "Five plates · a short session · about ten minutes"));
   s.append(el("h1", null, "Five questions you answer every day without noticing."));
-  s.append(el("p", { class: "lede" }, "Each plate is a small everyday dilemma. Choose what you would actually do, then answer a follow-up that tests that choice. At the end you get a reading of how you balance kindness, honesty, loyalty, freedom and truth, with the research behind every remark."));
+  s.append(el("p", { class: "lede" }, "Five everyday dilemmas, played as a short conversation with an analyst. Choose, say why, then face a twist. You get a reading of how you balance kindness, honesty, loyalty, freedom and truth."));
+  s.append(el("div", { class: "steps" }, [
+    el("div", { class: "step" }, [el("b", null, "Choose"), el("span", null, "What would you actually do?")]),
+    el("div", { class: "step" }, [el("b", null, "Explain"), el("span", null, "Pick the reason closest to yours.")]),
+    el("div", { class: "step" }, [el("b", null, "Face the twist"), el("span", null, "The situation changes. Do you?")]),
+    el("div", { class: "step" }, [el("b", null, "The mirror"), el("span", null, "Two closing questions about how you see yourself.")])
+  ]));
   const list = el("ol", { class: "plate-list", "aria-label": "The five plates" });
   PLATES.forEach(p => list.append(el("li", null, [
     el("span", { class: "num" }, "Plate " + p.numeral),
@@ -912,10 +1210,10 @@ function renderIntro() {
 
   const input = el("input", { id: "name", name: "name", type: "text", autocomplete: "given-name", maxlength: "60", placeholder: "Your name", "aria-describedby": "name-hint" });
   input.value = state.name;
-  const err = el("p", { class: "err", id: "name-err", hidden: true }, "Add your name so your reading can be addressed to you.");
+  const err = el("p", { class: "err", id: "name-err", hidden: true }, "Add your name so the analyst knows who they're talking to.");
   const form = el("form", { class: "start", id: "start-form", novalidate: true }, [
     el("label", { class: "label", for: "name" }, "Who is answering?"),
-    el("div", { class: "start-row" }, [input, el("button", { class: "btn", type: "submit" }, "Begin plate I")]),
+    el("div", { class: "start-row" }, [input, el("button", { class: "btn", type: "submit" }, "Start the session")]),
     err,
     el("p", { class: "hint", id: "name-hint" }, RESPONSE_ENDPOINT
       ? "When you finish, your name and answers are sent to the person who shared this page with you."
@@ -932,70 +1230,74 @@ function renderIntro() {
   m.append(s);
 }
 
-/* ---------- plate ---------- */
-function noteCard(label, r) {
-  const n = el("div", { class: "note reveal" }, [
-    el("p", { class: "eyebrow" }, label),
-    el("h3", null, r.title),
-    el("p", null, r.body)
-  ]);
-  if (r.daily) n.append(el("p", { class: "daily" }, [el("span", { class: "label" }, "In daily life"), r.daily]));
-  return n;
+/* ---------- the session thread ---------- */
+async function analystSays(thread, kids, delay, anchor) {
+  const typing = el("div", { class: "msg typing", "aria-hidden": "true" }, [el("span"), el("span"), el("span")]);
+  thread.append(typing);
+  bringIntoView(typing, anchor);
+  await wait(delay);
+  typing.remove();
+  const msg = el("div", { class: "msg reveal" }, [el("span", { class: "who" }, "Analyst")].concat(kids));
+  thread.append(msg);
+  bringIntoView(msg, anchor || msg);
+  return msg;
 }
-function optionList(options, onPick) {
-  const box = el("div", { class: "options", role: "group" });
-  options.forEach(o => {
-    const b = el("button", { class: "opt", type: "button" }, [el("span", { class: "k" }, o.key), el("span", null, o.text)]);
-    b.addEventListener("click", () => {
-      if (box.classList.contains("locked")) return;
-      box.classList.add("locked");
-      [...box.children].forEach(c => {
-        c.classList.add(c === b ? "picked" : "faded");
-        c.setAttribute("aria-disabled", "true");
-        if (c === b) c.setAttribute("aria-pressed", "true");
-      });
-      onPick(o);
+function noteKids(r) {
+  const kids = [el("h3", null, r.title), el("p", null, r.body)];
+  if (r.daily) kids.push(el("p", { class: "daily" }, [el("span", { class: "label" }, "In daily life"), r.daily]));
+  return kids;
+}
+function choose(thread, options, anchor) {
+  return new Promise(resolve => {
+    const box = el("div", { class: "choices reveal", role: "group", "aria-label": "Your answer" });
+    options.forEach((o, n) => {
+      const b = el("button", { class: "choice", type: "button" }, [el("span", { class: "k" }, String.fromCharCode(65 + n)), el("span", null, o.text)]);
+      b.addEventListener("click", () => {
+        box.remove();
+        const mine = el("div", { class: "msg you reveal" }, [el("span", { class: "who" }, state.name), el("p", null, o.text)]);
+        thread.append(mine);
+        resolve({ o, mine });
+      }, { once: true });
+      box.append(b);
     });
-    box.append(b);
+    thread.append(box);
+    bringIntoView(box, anchor);
   });
-  return box;
+}
+// One round: the analyst asks, the person picks, the analyst responds with the note for that pick.
+async function round(thread, prompt, options, anchor, firstDelay) {
+  const ask = await analystSays(thread, [el("p", { class: "ask" }, prompt)], firstDelay, anchor);
+  const { o, mine } = await choose(thread, options, ask);
+  const note = await analystSays(thread, noteKids(o), 800, mine);
+  return { o, note };
 }
 
+/* ---------- plate ---------- */
 function renderPlate(i) {
   setProgress(i);
-  const p = PLATES[i];
+  const p = PLATES[i], q = "q" + (i + 1);
   const m = clear();
   const s = el("section", { class: "plate" });
   const h = el("h2", { tabindex: "-1" }, p.title);
-  s.append(el("p", { class: "eyebrow" }, "Plate " + p.numeral + " of V · " + p.theme), h);
-  s.append(blot(p.seed, p.reds));
-  s.append(el("p", { class: "scenario" }, p.scenario));
-  s.append(el("p", { class: "prompt" }, p.prompt));
-
-  const slot = el("div", { class: "stack" });
-  s.append(optionList(p.options, o => {
-    state.answers["q" + (i + 1)] = o.key;
-    const note = noteCard("Analyst's note", o);
-    const follow = el("div", { class: "follow reveal" }, [
-      el("p", { class: "eyebrow" }, "Follow-up"),
-      el("p", { class: "prompt" }, o.follow.prompt)
-    ]);
-    const fslot = el("div", { class: "stack" });
-    follow.append(optionList(o.follow.options, f => {
-      state.answers["q" + (i + 1) + "f"] = f.key;
-      fslot.append(noteCard("What the follow-up shows", f));
-      const after = afterBlock(p, o, i);
-      fslot.append(after);
-      scrollTo(fslot.firstChild);
-    }));
-    follow.append(fslot);
-    slot.append(note, follow);
-    scrollTo(note);
-  }));
-  s.append(slot);
+  const scenario = el("p", { class: "scenario" }, p.scenario);
+  const thread = el("div", { class: "thread", "aria-live": "polite" });
+  s.append(el("p", { class: "eyebrow" }, "Plate " + p.numeral + " of V · " + p.theme), h, blot(p.seed, p.reds), scenario, thread);
   m.append(s);
   window.scrollTo({ top: 0, behavior: "auto" });
   h.focus({ preventScroll: true });
+
+  (async () => {
+    const r1 = await round(thread, p.prompt, p.options, scenario, 500);
+    const o = r1.o;
+    state.answers[q] = o.key;
+    const r2 = await round(thread, o.why.prompt, o.why.options, r1.note, 600);
+    state.answers[q + "w"] = r2.o.key;
+    const r3 = await round(thread, o.follow.prompt, o.follow.options, r2.note, 600);
+    state.answers[q + "f"] = r3.o.key;
+    const after = afterBlock(p, o, i);
+    s.append(after);
+    bringIntoView(after, r3.note);
+  })();
 }
 
 function afterBlock(p, chosen, i) {
@@ -1015,30 +1317,58 @@ function afterBlock(p, chosen, i) {
   });
   others.append(ob);
 
-  const research = el("details", { class: "fold" }, el("summary", null, "The research behind this plate"));
+  const last = i === PLATES.length - 1;
+  const next = el("button", { class: "btn", type: "button" }, last ? "Continue to the mirror" : "Next: plate " + PLATES[i + 1].numeral);
+  next.addEventListener("click", () => last ? renderMirror() : renderPlate(i + 1));
+  wrap.append(others, researchFold("The research behind this plate", p.research), el("div", { class: "next-row" }, next));
+  return wrap;
+}
+function researchFold(label, items) {
+  const fold = el("details", { class: "fold" }, el("summary", null, label));
   const list = el("ul", { class: "refs" });
-  p.research.forEach(r => list.append(el("li", null, [
+  items.forEach(r => list.append(el("li", null, [
     el("p", null, r.claim),
     el("p", { class: "cite" }, el("a", { href: r.url, target: "_blank", rel: "noopener" }, r.cite))
   ])));
-  research.append(el("div", { class: "fold-body" }, list));
+  fold.append(el("div", { class: "fold-body" }, list));
+  return fold;
+}
 
-  const last = i === PLATES.length - 1;
-  const next = el("button", { class: "btn", type: "button" }, last ? "See my reading" : "Next: plate " + PLATES[i + 1].numeral);
-  next.addEventListener("click", () => last ? finish() : renderPlate(i + 1));
-  wrap.append(others, research, el("div", { class: "next-row" }, next));
-  return wrap;
+/* ---------- the mirror ---------- */
+function renderMirror() {
+  setProgress(PLATES.length);
+  const m = clear();
+  const s = el("section", { class: "plate" });
+  const h = el("h2", { tabindex: "-1" }, "The mirror");
+  const intro = el("p", { class: "scenario" }, "You have answered five dilemmas about other people. Before the reading, the analyst turns the questions around.");
+  const thread = el("div", { class: "thread", "aria-live": "polite" });
+  s.append(el("p", { class: "eyebrow" }, "Closing round · How you see yourself"), h, intro, thread);
+  m.append(s);
+  window.scrollTo({ top: 0, behavior: "auto" });
+  h.focus({ preventScroll: true });
+
+  (async () => {
+    const r1 = await round(thread, MIRROR[0].prompt, MIRROR[0].options, intro, 500);
+    state.answers.m1 = r1.o.key;
+    const r2 = await round(thread, MIRROR[1].prompt, MIRROR[1].options, r1.note, 600);
+    state.answers.m2 = r2.o.key;
+    const go = el("button", { class: "btn", type: "button" }, "See my reading");
+    go.addEventListener("click", finish);
+    const after = el("div", { class: "after reveal" }, [researchFold("The research behind the mirror", MIRROR_RESEARCH), el("div", { class: "next-row" }, go)]);
+    s.append(after);
+    bringIntoView(after, r2.note);
+  })();
 }
 
 /* ---------- results ---------- */
 function finish() {
   const a = state.answers;
-  try { history.replaceState(null, "", "#r=" + codeOf(a) + "&n=" + encodeURIComponent(state.name)); } catch (e) { /* file:// or sandboxed */ }
+  try { history.replaceState(null, "", hashOf(a, state.name)); } catch (e) { /* file:// or sandboxed */ }
   renderResults(a, state.name, false);
 }
 
 function renderResults(a, name, shared) {
-  setProgress(PLATES.length);
+  setProgress(PLATES.length + 1);
   const pr = profileOf(a);
   const m = clear();
   const r = el("section", { class: "result" });
@@ -1056,14 +1386,14 @@ function renderResults(a, name, shared) {
     el("span", { class: "t-val" }, String(pr.pct[k])),
     el("p", { class: "t-desc" }, TRAIT[k].desc)
   ])));
-  r.append(el("div", { class: "section" }, [el("h2", null, "Your six signals"), el("p", { class: "hint" }, "Each score runs from 0 to 100 and shows where your answers fell between the lowest and highest possible result on that trait."), traits]));
+  r.append(el("div", { class: "section" }, [el("h2", null, "Your six signals"), el("p", { class: "hint" }, "0 to 100: where your answers fell between the lowest and highest possible score."), traits]));
 
   const top = PROFILES[pr.top], sec = PROFILES[pr.second];
   r.append(el("div", { class: "section" }, [
     el("h2", null, "The core of you"),
     el("div", { class: "prose" }, [
       el("p", null, top.core),
-      el("p", null, "Your second strongest signal is " + TRAIT[pr.second].name.toLowerCase() + ". " + sec.mod)
+      el("p", null, "Second: " + TRAIT[pr.second].name.toLowerCase() + ". " + sec.mod)
     ]),
     el("div", { class: "facets" }, [
       el("div", { class: "facet" }, [el("span", { class: "label" }, "In relationships"), el("p", null, top.rel)]),
@@ -1074,7 +1404,7 @@ function renderResults(a, name, shared) {
 
   const pats = pr.patterns.length ? pr.patterns : [{
     title: "Where your instincts collide",
-    body: "Across the five plates, " + TRAIT[pr.top].name.toLowerCase() + " pulled hardest and " + TRAIT[pr.low].name.toLowerCase() + " pulled least. When the two conflict in real life, expect the first to decide for you, and keep that in mind when the stakes are high."
+    body: TRAIT[pr.top].name + " pulled hardest and " + TRAIT[pr.low].name.toLowerCase() + " least. When they conflict, expect the first to decide."
   }];
   r.append(el("div", { class: "section" }, [
     el("h2", null, "Patterns across your answers"),
@@ -1083,15 +1413,15 @@ function renderResults(a, name, shared) {
 
   const ratio = pr.counted ? pr.held / pr.counted : 0.5;
   const flex = ratio >= 0.7
-    ? ["Steady", "You held your first answer in most follow-ups, even when the facts or the stakes changed. You decide from stable commitments more than case by case. People find you predictable and principled. When genuinely new information arrives, though, holding firm can look like stubbornness."]
+    ? ["Steady", "You kept your first answer in most twists. Predictable and principled; when the facts really change, it can look like stubbornness."]
     : ratio <= 0.35
-      ? ["Responsive", "Your answers moved when the facts moved. You weigh details and consequences instead of applying fixed rules. Research on moral flexibility shows most people's judgements shift with framing and with how vivid the harm is, and you sit at the responsive end. The upside is good judgement in messy situations. The downside is that others may find you hard to predict."]
-      : ["Selective", "You held some positions and let others move. You seem to know which of your commitments are fixed and which depend on the details, which is close to what psychologists describe as mature moral reasoning."];
+      ? ["Responsive", "Your answers moved when the facts moved. Good judgement in messy cases, but harder for others to predict."]
+      : ["Selective", "You held some positions and let others move. You know which commitments are fixed and which depend on details."];
   const meter = el("div", { class: "meter", role: "img", "aria-label": pr.held + " of " + pr.counted + " positions held" });
   for (let k = 0; k < pr.counted; k++) meter.append(el("span", { class: k < pr.held ? "on" : "" }));
   r.append(el("div", { class: "section" }, [
     el("h2", null, "How you hold a position"),
-    el("div", { class: "actions" }, [meter, el("span", { class: "status" }, pr.held + " of " + pr.counted + " held under pressure · " + flex[0])]),
+    el("div", { class: "row" }, [meter, el("span", { class: "status" }, pr.held + " of " + pr.counted + " held under pressure · " + flex[0])]),
     el("p", { class: "prose" }, flex[1])
   ]));
 
@@ -1101,13 +1431,26 @@ function renderResults(a, name, shared) {
     el("p", null, PROFILES[pr.low].low)
   ]));
 
+  if (a.m1 && a.m2) {
+    const m1 = MIRROR[0].options.find(o => o.key === a.m1), m2 = MIRROR[1].options.find(o => o.key === a.m2);
+    r.append(el("div", { class: "section" }, [
+      el("h2", null, "How you see yourself"),
+      el("p", { class: "prose" }, mirrorSummary(a.m1, a.m2)),
+      el("div", { class: "mirror-pair" }, [
+        el("div", { class: "facet" }, [el("span", { class: "label" }, "Compared with others: " + m1.text.replace(/\.$/, "").toLowerCase()), el("h3", null, m1.title), el("p", null, m1.body)]),
+        el("div", { class: "facet" }, [el("span", { class: "label" }, "Answered: " + m2.text.replace(/\.$/, "").toLowerCase()), el("h3", null, m2.title), el("p", null, m2.body)])
+      ])
+    ]));
+  }
+
   const recap = el("ol", { class: "recap" });
-  picks(a).forEach(({ p, o, f }) => recap.append(el("li", null, [
+  picks(a).forEach(({ p, o, w, f }) => recap.append(el("li", null, [
     el("span", { class: "num" }, "Plate " + p.numeral),
     el("div", { class: "body" }, [
       el("span", { class: "t" }, p.title),
-      el("p", { class: "ans" }, [o.text + " ", el("span", null, "(" + o.title + ")")]),
-      el("p", { class: "ans" }, [el("span", null, "Then: "), f.text + " ", el("span", null, "(" + f.title + ")")])
+      el("p", { class: "ans" }, [el("span", { class: "lab" }, "Chose"), o.text + " ", el("span", null, "(" + o.title + ")")]),
+      el("p", { class: "ans" }, [el("span", { class: "lab" }, "Because"), w.text + " ", el("span", null, "(" + w.title + ")")]),
+      el("p", { class: "ans" }, [el("span", { class: "lab" }, "Then"), f.text + " ", el("span", null, "(" + f.title + ")")])
     ])
   ])));
   r.append(el("div", { class: "section" }, [el("h2", null, "Your answers, one by one"), recap]));
@@ -1133,7 +1476,7 @@ function renderResults(a, name, shared) {
     window.scrollTo({ top: 0 });
   });
   const saveLine = el("p", { class: "status", role: "status" });
-  r.append(el("div", { class: "section" }, [el("div", { class: "actions" }, [copy, again, status]), linkBox, saveLine]));
+  r.append(el("div", { class: "section" }, [el("div", { class: "row" }, [copy, again, status]), linkBox, saveLine]));
 
   m.append(r);
   window.scrollTo({ top: 0, behavior: "auto" });
@@ -1150,13 +1493,16 @@ function saveResponse(a, name, pr) {
   state.saved = true;
   const columns = ["Name", "Profile", "Strongest traits"];
   const values = [name, pr.pair.name, TRAIT[pr.top].name + " + " + TRAIT[pr.second].name];
-  picks(a).forEach(({ p, o, f }) => {
-    columns.push("Plate " + p.numeral + " answer", "Plate " + p.numeral + " follow-up");
-    values.push(o.key + ": " + o.text, f.key + ": " + f.text);
+  picks(a).forEach(({ p, o, w, f }) => {
+    columns.push("Plate " + p.numeral + " choice", "Plate " + p.numeral + " reason", "Plate " + p.numeral + " twist");
+    values.push(o.key + ": " + o.text, w.text, f.key + ": " + f.text);
   });
+  const m1 = MIRROR[0].options.find(o => o.key === a.m1), m2 = MIRROR[1].options.find(o => o.key === a.m2);
+  columns.push("Compared with others", "Answered as");
+  values.push(m1 ? m1.text : "", m2 ? m2.text : "");
   TRAITS.forEach(t => { columns.push(t.name); values.push(pr.pct[t.k]); });
   columns.push("Patterns", "Positions held", "Answer code", "Reading link");
-  values.push(pr.patterns.map(x => x.title).join("; "), pr.held + " of " + pr.counted, codeOf(a), resultLink(a, name));
+  values.push(pr.patterns.map(x => x.title).join("; "), pr.held + " of " + pr.counted, codeOf(a) + (a.m1 ? " / " + a.m1 + a.m2 : ""), resultLink(a, name));
   return fetch(RESPONSE_ENDPOINT, {
     method: "POST",
     mode: "no-cors",
@@ -1166,21 +1512,20 @@ function saveResponse(a, name, pr) {
 }
 
 /* ---------- routing ---------- */
-function route() {
+function readHash() {
   const params = new URLSearchParams(location.hash.slice(1));
-  const a = answersFromCode(params.get("r"));
+  return { a: answersFromCode(params.get("r"), params.get("m")), name: (params.get("n") || "someone").slice(0, 60) };
+}
+function route() {
+  const { a, name } = readHash();
   if (a) {
-    const name = (params.get("n") || "someone").slice(0, 60);
     const own = state.saved && codeOf(state.answers) === codeOf(a);
     renderResults(a, name, !own);
     return;
   }
   renderIntro();
 }
-window.addEventListener("hashchange", () => {
-  const params = new URLSearchParams(location.hash.slice(1));
-  if (answersFromCode(params.get("r"))) route();
-});
+window.addEventListener("hashchange", () => { if (readHash().a) route(); });
 route();
 })();
 </script>

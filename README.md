@@ -1,6 +1,6 @@
 # The Quiet Questions
 
-Five everyday dilemmas that people answer by instinct without ever examining them. Each one has a follow-up question that tests the first answer. At the end the respondent gets a written reading of how they balance kindness, honesty, loyalty, freedom and truth. Every remark is grounded in published research in moral psychology and behavioural economics.
+Five everyday dilemmas that people answer by instinct without ever examining them. Each one plays out as a short conversation with an analyst: what you would do, why, and a twist that tests the answer. A closing "mirror" round asks how you see yourself. At the end the respondent gets a short, direct reading of how they balance kindness, honesty, loyalty, freedom and truth. Every remark is grounded in published research in moral psychology and behavioural economics.
 
 It is a single static page (`index.html`). All the branching logic is plain JavaScript `if`/`else` over fixed data, with no build step and no server. Answers can optionally be recorded in a Google Sheet so you can see who answered what.
 
@@ -14,24 +14,30 @@ It is a single static page (`index.html`). All the branching logic is plain Java
 | IV | **The Friend's Big Idea.** Their business plan has a fatal flaw. They ask what you honestly think. | Truth versus kindness; prosocial lies; the MUM effect |
 | V | **The Sealed Envelope.** It holds the date of your death. Open or burn? | Knowledge versus peace of mind; deliberate ignorance; information avoidance |
 
-Each plate has 3 or 4 first answers, and each first answer has its own follow-up with 2 or 3 options, for 34 distinct paths. After every answer the page shows:
+Each plate runs in three rounds:
 
-- an **analyst's note** on what the choice suggests about the person and how it tends to show up in daily life,
-- a note on the **follow-up** answer,
-- **how the other answers read**, giving the case for each side of the dilemma,
-- **the research behind the plate**, with links to the papers.
+1. **The choice.** 3 or 4 answers.
+2. **Why.** Every answer gets its own counter-question with three reasons to pick from (for example "Why food and not money?"). The reason changes the scoring: giving money to ease your own discomfort reads differently from giving it out of respect for his choices.
+3. **The twist.** The situation changes (the shop won't serve him, the pedestrian dies, the hint is missed) and 2 or 3 options test whether the first answer holds.
+
+After each pick the analyst replies with a one- or two-line remark. When the plate is done the page shows **how the other answers read** and **the research behind the plate**, with links to the papers.
+
+After plate V, **the mirror** asks two questions: how you would act compared with most people, and whether you answered as you would act or as you would like to act (Epley & Dunning 2000; FeldmanHall et al. 2012).
+
+That gives 30 × 18 × 18 × 18 × 18 = 3,149,280 distinct paths through the five plates.
 
 ## How the final reading is built
 
-1. **Six traits.** Every answer adds or subtracts points on Compassion, Respect for autonomy, Principle, Loyalty, Appetite for truth and Self-protection. Each total is rescaled to 0–100 against the lowest and highest score possible on that trait.
+1. **Six traits.** Every choice, reason and twist adds or subtracts points on Compassion, Respect for autonomy, Principle, Loyalty, Appetite for truth and Self-protection. Each total is rescaled to 0–100 against the lowest and highest score possible on that trait.
 2. **Profile.** The two strongest traits pick one of 15 profiles (for example *The Torn Knight*: Principle + Loyalty). The strongest trait supplies the "core of you", relationships, work and under-pressure notes, and the second one modifies them.
-3. **Patterns across answers.** 18 cross-question rules look for revealing combinations. One example is a person who gives freely to a stranger but tells a friend a kind lie, which is "freedom for strangers, protection for friends". Up to five matching patterns are shown.
-4. **How you hold a position.** Each follow-up is tagged by whether it kept the first stance or moved off it. That gives a steady, selective or responsive reading of moral flexibility.
+3. **Patterns across answers.** 25 cross-question rules look for revealing combinations of choices and reasons. One example is "your reasons point back to you": two or more reasons that are about avoiding discomfort, hassle, risk or blame. Up to five matching patterns are shown.
+4. **How you hold a position.** Each twist is tagged by whether it kept the first stance or moved off it. That gives a steady, selective or responsive reading of moral flexibility.
 5. **Blind spot.** The weakest trait is written up as the person's blind spot.
+6. **How you see yourself.** The two mirror answers are read together (for example "better than most" plus "as I'd actually act" is flagged as the combination where self-image and behaviour drift apart most).
 
-All 12,960 possible answer combinations were run through the scoring. Every profile and every pattern is reachable.
+All 3,149,280 possible paths were run through the scoring. Every profile and every pattern is reachable, and every score stays within 0–100.
 
-A reading can be reopened from its link (`#r=<answer code>&n=<name>`) without retaking the questions.
+A reading can be reopened from its link (`#r=<answer code>&m=<mirror>&n=<name>`) without retaking the questions. Each plate is coded as choice letter, reason letter and twist number, for example `Bb2`.
 
 ## Sharing it
 
@@ -49,7 +55,7 @@ A static page cannot write to a database by itself, so answers go to a small Goo
 4. Click **Deploy**, approve the permissions prompt (it only needs access to this Sheet), and copy the **Web app URL** (it ends in `/exec`).
 5. In `index.html`, paste that URL into `const RESPONSE_ENDPOINT = "";` near the top of the script. Then commit and push.
 
-From then on, every finished run adds a row to the **Responses** tab with the person's name, each answer and follow-up, the profile name, six trait scores, the matched patterns, and a link that reopens their full reading. Respondents are told on the first screen that their name and answers will be sent to you.
+From then on, every finished run adds a row to the **Responses** tab with the person's name, the choice, reason and twist for each plate, both mirror answers, the profile name, six trait scores, the matched patterns, and a link that reopens their full reading. Respondents are told on the first screen that their name and answers will be sent to you.
 
 To check that the deployment is live, open the `/exec` URL in a browser. It should return `{"ok":true,...}`.
 
@@ -65,6 +71,13 @@ This is a reflective exercise built on real findings. It is not a validated or c
 - Andreoni, Rao & Trachtman (2017). Avoiding the ask. *Journal of Political Economy* 125(3), 625–653.
 - Cushman, Young & Hauser (2006). The role of conscious reasoning and intuition in moral judgment. *Psychological Science* 17(12).
 - Zaki (2014). Empathy: A motivated account. *Psychological Bulletin* 140(6).
+- Batson, Duncan, Ackerman, Buckley & Birch (1981). Is empathic emotion a source of altruistic motivation? *Journal of Personality and Social Psychology* 40(2).
+- Spranca, Minsk & Baron (1991). Omission and commission in judgment and choice. *Journal of Experimental Social Psychology* 27(1).
+- Kunda (1990). The case for motivated reasoning. *Psychological Bulletin* 108(3).
+- Scott (2017). *Radical Candor*. St. Martin's Press.
+- Kahneman & Tversky (1979). Prospect theory. *Econometrica* 47(2), 263–291.
+- Epley & Dunning (2000). Feeling "holier than thou". *Journal of Personality and Social Psychology* 79(6), 861–875.
+- FeldmanHall, Mobbs, Evans, Hiscox, Navrady & Dalgleish (2012). What we say and what we do. *Cognition* 123(3), 434–441.
 - Cohn, Maréchal, Tannenbaum & Zünd (2019). Civic honesty around the globe. *Science* 365(6448), 70–73.
 - Abeler, Nosenzo & Raymond (2019). Preferences for truth-telling. *Econometrica* 87(4), 1115–1153.
 - Gerlach, Teodorescu & Hertwig (2019). The truth about lies. *Psychological Bulletin* 145(1), 1–44.
